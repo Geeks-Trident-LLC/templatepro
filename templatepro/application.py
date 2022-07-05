@@ -32,7 +32,7 @@ from io import StringIO
 from textfsm import TextFSM
 
 from pprint import pformat
-from dlpro.collection import Tabular
+from genericlib import get_data_as_tabular
 
 from templatepro import TemplateBuilder
 from templatepro.exceptions import TemplateBuilderInvalidFormat
@@ -1459,8 +1459,7 @@ class Application:
 
             lst.append('Test Result')
             if rows and self.tabular_chkbox_var.get():
-                tabular_obj = Tabular(rows)
-                tabular_data = tabular_obj.get()
+                tabular_data = get_data_as_tabular(rows)
                 result += fmt.format(tabular_data) if result else tabular_data
             else:
                 pretty_data = pformat(rows)

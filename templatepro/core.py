@@ -11,8 +11,8 @@ from textwrap import dedent
 from regexpro import LinePattern
 from regexpro.core import enclose_string
 
-from dlpro.collection import Tabular
-from dlpro.utils import Printer
+from genericlib import get_data_as_tabular
+from genericlib import Printer
 
 from templatepro.exceptions import TemplateParsedLineError
 from templatepro.exceptions import TemplateBuilderError
@@ -419,7 +419,7 @@ class TemplateBuilder:
                 print(pformat(expected_result) + '\n')
             if test_result is not None:
                 printer.print('Test Result:'.ljust(width))
-                txt = Tabular(test_result).get() if tabular else pformat(test_result)
+                txt = get_data_as_tabular(test_result) if tabular else pformat(test_result)
                 print(txt + '\n')
 
             verified_msg = 'Verified Message: {}'.format(self.verified_message)
