@@ -13,6 +13,7 @@ from regexpro.core import enclose_string
 
 from genericlib import get_data_as_tabular
 from genericlib import Printer
+from genericlib import MiscObject
 
 from templatepro.exceptions import TemplateParsedLineError
 from templatepro.exceptions import TemplateBuilderError
@@ -426,7 +427,7 @@ class TemplateBuilder:
             printer.print(verified_msg.ljust(width))
 
     def verify(self, expected_rows_count=None, expected_result=None,
-               tabular=False, debug=False):
+               tabular=False, debug=False, ignore_space=False):
         """verify test_data via template
         
         Parameters
@@ -435,6 +436,8 @@ class TemplateBuilder:
         expected_result (list): a list of dictionary.
         tabular (bool): show result in tabular format.  Default is False.
         debug (bool): True will show debug info.  Default is False.
+        ignore_space(bool): True will strip any leading or trailing space in data.
+                Default is False.
 
         Returns
         -------
@@ -469,6 +472,7 @@ class TemplateBuilder:
                     self.verified_message = fmt.format(expected_rows_count)
 
             if expected_result is not None:
+                rows = MiscObject.cleanup_list_of_dict(rows) if ignore_space else rows
                 chk = rows == expected_result
                 is_verified &= chk
 
