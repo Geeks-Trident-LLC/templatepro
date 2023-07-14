@@ -15,3 +15,11 @@ class TemplateBuilderError(TemplateError):
 
 class TemplateBuilderInvalidFormat(TemplateError):
     """Use to capture error if user_data has invalid format."""
+
+
+class NoUserTemplateSnippetError(TemplateError):
+    """Use to capture error if user_data is empty"""
+
+
+class NoTestDataError(TemplateError):
+    """Use to capture error if there is no test_data"""

@@ -5,6 +5,7 @@
 
 from templatepro.core import ParsedLine
 from templatepro.core import TemplateBuilder
+from templatepro.core import NonCommercialUseCls
 from templatepro.config import version
 from templatepro.config import edition
 
@@ -14,6 +15,7 @@ __edition__ = edition
 __all__ = [
     'ParsedLine',
     'TemplateBuilder',
+    'NonCommercialUseCls',
     'version',
     'edition',
 ]
