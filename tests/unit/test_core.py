@@ -35,7 +35,7 @@ def tc_info():
         # Company     : ABC XYZ LLC
         # Created date: _datetime_
         ################################################################################
-        Value title (\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*)
+        Value title ([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
         Value price ((\\d+)?[.]?\\d+)
         Value genre ([a-zA-Z0-9]+( [a-zA-Z0-9]+)*)
 
@@ -69,7 +69,7 @@ def tc_info():
         # Company     : ABC XYZ LLC
         # Created date: _datetime_
         ################################################################################
-        Value title (\\S*[a-zA-Z0-9]\\S*( \\S*[a-zA-Z0-9]\\S*)*)
+        Value title ([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
         Value price ((\\d+)?[.]?\\d+)
         Value genre ([a-zA-Z0-9]+( [a-zA-Z0-9]+)*)
 
@@ -176,11 +176,11 @@ class TestParsedLine:
             ),
             (
                 '===   ==========   ======',    # data
-                '  ^=== +========== +======'    # expected_result
+                '  ^={2,} +={2,} +={2,}'    # expected_result
             ),
             (
                 '===   ==========   ====== end()',  # data
-                '  ^=== +========== +======$$'  # expected_result
+                '  ^={2,} +={2,} +={2,}$$'  # expected_result
             ),
             (
                 'Today temperature is digits(var_degree) celsius.',     # data

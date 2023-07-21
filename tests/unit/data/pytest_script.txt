@@ -10,7 +10,7 @@ template = r"""#################################################################
 # Company     : ABC XYZ LLC
 # Created date: _datetime_
 ################################################################################
-Value title (\S*[a-zA-Z0-9]\S*( \S*[a-zA-Z0-9]\S*)*)
+Value title ([\x21-\x7e]*[a-zA-Z][\x21-\x7e]*( [\x21-\x7e]*[a-zA-Z][\x21-\x7e]*)*)
 Value price ((\d+)?[.]?\d+)
 Value genre ([a-zA-Z0-9]+( [a-zA-Z0-9]+)*)
 
