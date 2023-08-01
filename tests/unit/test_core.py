@@ -37,7 +37,7 @@ def tc_info():
         ################################################################################
         Value title ([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
         Value price ((\\d+)?[.]?\\d+)
-        Value genre ([a-zA-Z0-9]+( [a-zA-Z0-9]+)*)
+        Value genre ([a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)
 
         Start
           ^Title +Price +Genre
@@ -71,7 +71,7 @@ def tc_info():
         ################################################################################
         Value title ([\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*( [\\x21-\\x7e]*[a-zA-Z][\\x21-\\x7e]*)*)
         Value price ((\\d+)?[.]?\\d+)
-        Value genre ([a-zA-Z0-9]+( [a-zA-Z0-9]+)*)
+        Value genre ([a-zA-Z][a-zA-Z0-9]*( [a-zA-Z][a-zA-Z0-9]*)*)
 
         Start
           # Title column consists a list of mixed words
