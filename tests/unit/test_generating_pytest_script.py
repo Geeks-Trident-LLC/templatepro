@@ -1,6 +1,6 @@
 from textwrap import dedent
 from datetime import datetime
-from templatepro import TemplateBuilder
+from textfsmgenerator import TemplateBuilder
 
 
 class TestTemplateBuilderPytestScript:

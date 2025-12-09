@@ -1,11 +1,11 @@
-"""Module containing the logic for the Template application."""
+"""Module containing the logic for the TextFSM Generator application."""
 
 try:
     import tkinter as tk
 except ModuleNotFoundError:
     import sys
     from platform import python_version as py_version
-    items = ["Failed to launch TemplatePro application because",
+    items = ["Failed to launch textFSM Generator application because",
              "Python{} binary doesn't have tkinter module.".format(py_version()),
              "Please install tkinter module and try it again."]
     max_len = max(len(item) for item in items)
@@ -34,13 +34,13 @@ from textfsm import TextFSM
 from pprint import pformat
 from genericlib import get_data_as_tabular
 
-from templatepro import TemplateBuilder
-from templatepro.exceptions import TemplateBuilderInvalidFormat
-from templatepro.core import save_file
-from templatepro.config import Data
+from textfsmgenerator import TemplateBuilder
+from textfsmgenerator.exceptions import TemplateBuilderInvalidFormat
+from textfsmgenerator.core import save_file
+from textfsmgenerator.config import Data
 
-from templatepro import version
-from templatepro import edition
+from textfsmgenerator import version
+from textfsmgenerator import edition
 
 
 __version__ = version
@@ -154,7 +154,7 @@ class UserTemplate:
 
     Attributes
     ----------
-    filename (str): user template file name i.e /home_dir/.geekstrident/templatepro/user_templates.yaml
+    filename (str): user template file name i.e /home_dir/.geekstrident/textfsmgenerator/user_templates.yaml
     status (str): a status message.
     content (str): user template file content.
 
@@ -172,12 +172,12 @@ class UserTemplate:
         self.content = ''
 
     def is_exist(self):
-        """return True if /home_dir/.geekstrident/templatepro/user_templates.yaml exists"""
+        """return True if /home_dir/.geekstrident/textfsmgenerator/user_templates.yaml exists"""
         node = Path(self.filename)
         return node.exists()
 
     def create(self, confirmed=True):
-        """create /home_dir/.geekstrident/templatepro/user_templates.yaml if it IS NOT existed.
+        """create /home_dir/.geekstrident/textfsmgenerator/user_templates.yaml if it IS NOT existed.
 
         Parameters
         ----------
@@ -226,7 +226,7 @@ class UserTemplate:
             create_msgbox(title=title, error=error)
 
     def read(self):
-        """return content of /home_dir/.geekstrident/templatepro/user_templates.yaml"""
+        """return content of /home_dir/.geekstrident/textfsmgenerator/user_templates.yaml"""
         if self.is_exist():
             with open(self.filename) as stream:
                 self.content = stream.read()
@@ -284,7 +284,7 @@ class UserTemplate:
             return ''
 
     def write(self, template_name, template):
-        """store template to /home_dir/.geekstrident/templatepro/user_templates.yaml
+        """store template to /home_dir/.geekstrident/textfsmgenerator/user_templates.yaml
 
         Parameters
         ----------
@@ -777,7 +777,7 @@ class Application:
             frame, text='Pypi.com Dependencies:', bold=True
         ).grid(row=2, column=0, sticky=tk.W)
 
-        # TemplatePro package
+        # textFSM Generator package
         self.create_custom_label(
             frame, text=Data.regexpro_text,
             link=Data.regexpro_link

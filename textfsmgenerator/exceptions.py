@@ -1,4 +1,4 @@
-"""Module containing the exception class for templatepro."""
+"""Module containing the exception class for textFSM Generator."""
 
 
 class TemplateError(Exception):

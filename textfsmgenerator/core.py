@@ -1,4 +1,4 @@
-"""Module containing the logic for template builder."""
+"""Module containing the logic for textFSM generator."""
 
 import re
 from datetime import datetime
@@ -14,14 +14,14 @@ from genericlib import get_data_as_tabular
 from genericlib import Printer
 from genericlib import MiscObject
 
-from templatepro.exceptions import TemplateParsedLineError
-from templatepro.exceptions import TemplateBuilderError
-from templatepro.exceptions import TemplateBuilderInvalidFormat
-from templatepro.exceptions import NoUserTemplateSnippetError
-from templatepro.exceptions import NoTestDataError
+from textfsmgenerator.exceptions import TemplateParsedLineError
+from textfsmgenerator.exceptions import TemplateBuilderError
+from textfsmgenerator.exceptions import TemplateBuilderInvalidFormat
+from textfsmgenerator.exceptions import NoUserTemplateSnippetError
+from textfsmgenerator.exceptions import NoTestDataError
 
-from templatepro.config import edition
-from templatepro.config import version
+from textfsmgenerator.config import edition
+from textfsmgenerator.config import version
 
 import logging
 logger = logging.getLogger(__file__)

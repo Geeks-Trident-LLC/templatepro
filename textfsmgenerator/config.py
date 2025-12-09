@@ -1,4 +1,4 @@
-"""Module containing the attributes for templatepro."""
+"""Module containing the attributes for textFSM Generator."""
 
 from os import path
 from textwrap import dedent
@@ -31,7 +31,7 @@ class Data:
         PurePath(
             Path.home(),
             '.geekstrident',
-            'templatepro',
+            'textfsmgenerator',
             'user_templates.yaml')
     )
 
@@ -63,7 +63,7 @@ class Data:
     company_url = 'https://www.geekstrident.com/'
 
     # URL
-    repo_url = 'https://github.com/Geeks-Trident-LLC/templatepro'
+    repo_url = 'https://github.com/Geeks-Trident-LLC/textfsmgenerator'
     # TODO: Need to update wiki page for documentation_url instead of README.md.
     documentation_url = path.join(repo_url, 'blob/develop/README.md')
     license_url = path.join(repo_url, 'blob/develop/LICENSE')

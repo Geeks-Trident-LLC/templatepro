@@ -2,8 +2,8 @@ import pytest
 from textwrap import dedent
 from datetime import datetime
 
-from templatepro import ParsedLine
-from templatepro import TemplateBuilder
+from textfsmgenerator import ParsedLine
+from textfsmgenerator import TemplateBuilder
 
 
 @pytest.fixture

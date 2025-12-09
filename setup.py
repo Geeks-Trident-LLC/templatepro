@@ -1,10 +1,10 @@
-"""Packaging templatepro."""
+"""Packaging textFSM Generator."""
 
 from setuptools import setup, find_packages
 
 
 setup(
-    name='templatepro',
+    name='textfsmgenerator',
     version='0.1.13',
     license='BSD-3-Clause',
     license_files=['LICENSE'],
@@ -21,7 +21,7 @@ setup(
         'dlpro',
         'pyyaml'
     ],
-    url='https://github.com/Geeks-Trident-LLC/templatepro',
+    url='https://github.com/Geeks-Trident-LLC/textfsmgenerator',
     packages=find_packages(
         exclude=(
             'tests*', 'testing*', 'examples*',
@@ -31,8 +31,8 @@ setup(
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'templatepro = templatepro.main:execute',
-            'template-pro = templatepro.application:execute',
+            'textfsmgenerator = textfsmgenerator.main:execute',
+            'template-pro = textfsmgenerator.application:execute',
         ]
     },
     classifiers=[

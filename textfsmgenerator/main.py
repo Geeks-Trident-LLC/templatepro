@@ -1,16 +1,16 @@
-"""Module containing the logic for the templatepro entry-points."""
+"""Module containing the logic for the textFSM Generator entry-points."""
 
 import sys
 import argparse
 import re
 import yaml
 
-from templatepro.application import Application
-from templatepro import TemplateBuilder
+from textfsmgenerator.application import Application
+from textfsmgenerator import TemplateBuilder
 
 
 def run_gui_application(options):
-    """Run templatepro GUI application.
+    """Run textfsmgenerator GUI application.
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ def run_gui_application(options):
 
     Returns
     -------
-    None: will invoke ``templatepro.Application().run()`` and ``sys.exit(0)``
+    None: will invoke ``textfsmgenerator.Application().run()`` and ``sys.exit(0)``
     if end user requests `--gui`
     """
     if options.gui:
@@ -30,7 +30,7 @@ def run_gui_application(options):
 def show_dependency(options):
     if options.dependency:
         from platform import uname, python_version
-        from templatepro.config import Data
+        from textfsmgenerator.config import Data
         lst = [
             Data.main_app_text,
             'Platform: {0.system} {0.release} - Python {1}'.format(
@@ -51,11 +51,11 @@ def show_dependency(options):
 
 
 class Cli:
-    """templatepro console CLI application."""
+    """textfsmgenerator console CLI application."""
 
     def __init__(self):
         parser = argparse.ArgumentParser(
-            prog='templatepro',
+            prog='textfsmgenerator',
             usage='%(prog)s [options]',
             description='%(prog)s application',
         )
@@ -96,7 +96,7 @@ class Cli:
 
         parser.add_argument(
             '-d', '--dependency', action='store_true',
-            help='Show TemplatePro dependent package(s).'
+            help='Show textFSM Generator dependent package(s).'
         )
 
         self.parser = parser
