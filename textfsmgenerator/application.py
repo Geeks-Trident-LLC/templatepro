@@ -779,8 +779,8 @@ class Application:
 
         # textFSM Generator package
         self.create_custom_label(
-            frame, text=Data.regexpro_text,
-            link=Data.regexpro_link
+            frame, text=Data.regexbuilder_text,
+            link=Data.regexbuilder_link
         ).grid(row=3, column=0, padx=(20, 0), sticky=tk.W)
 
         # dictlistlib package

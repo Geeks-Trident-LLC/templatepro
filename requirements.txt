@@ -1,4 +1,4 @@
 textfsm
-# regexpro
-# dlpro
+regexbuilder
+dictlistlib
 pyyaml

@@ -6,8 +6,8 @@ from textwrap import dedent
 from pathlib import Path
 from pathlib import PurePath
 
-import regexpro
-import dlpro
+import regexbuilder
+import dictlistlib
 import textfsm
 import yaml
 
@@ -41,8 +41,8 @@ class Data:
     main_app_text = 'TemplateApp v{}'.format(version)
 
     # packages
-    gtregexpro_text = 'regexapp v{}'.format(regexpro.version)
-    gtregexpro_link = ''
+    gtregexbuilder_text = 'regexapp v{}'.format(regexbuilder.version)
+    gtregexbuilder_link = ''
 
     gtgenlib_text = f"genericlib v{gtlib_version}"
     gtgenlib_link = ""
@@ -89,7 +89,7 @@ class Data:
     def get_dependency(cls):
         dependencies = dict(
             gtregexapp=dict(
-                package=cls.gtregexpro_text,
+                package=cls.gtregexbuilder_text,
                 url=""
             ),
             gtdlapp=dict(
