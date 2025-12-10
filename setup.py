@@ -18,7 +18,7 @@ setup(
     install_requires=[
         'textfsm',
         'regexpro',
-        'dlpro',
+        'dictlistlib',
         'pyyaml'
     ],
     url='https://github.com/Geeks-Trident-LLC/textfsmgenerator',

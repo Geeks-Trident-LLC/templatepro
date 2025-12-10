@@ -783,10 +783,10 @@ class Application:
             link=Data.regexpro_link
         ).grid(row=3, column=0, padx=(20, 0), sticky=tk.W)
 
-        # DLPro package
+        # dictlistlib package
         self.create_custom_label(
-            frame, text=Data.dlpro_text,
-            link=Data.dlpro_link
+            frame, text=Data.dictlistlib_text,
+            link=Data.dictlistlib_link
         ).grid(row=4, column=0, padx=(20, 0), pady=(0, 10), sticky=tk.W)
 
         # TextFSM package
