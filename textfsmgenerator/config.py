@@ -1,4 +1,4 @@
-"""Module containing the attributes for textFSM Generator."""
+"""Module defining core attributes for the TextFSM Generator library."""
 
 from os import path
 from textwrap import dedent
@@ -13,9 +13,9 @@ import yaml
 
 from genericlib import version as gtlib_version
 
-__version__ = '0.1.13'
+__version__ = '0.2.0'
 version = __version__
-__edition__ = 'Pro'
+__edition__ = 'Community'
 edition = __edition__
 
 __all__ = [

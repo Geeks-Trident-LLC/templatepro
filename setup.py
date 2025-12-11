@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='textfsmgenerator',
-    version='0.1.13',
+    version='0.2.0',
     license='BSD-3-Clause',
     license_files=['LICENSE'],
     description='The application to generate template format.',
