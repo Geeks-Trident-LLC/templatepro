@@ -793,3 +793,21 @@ class NonCommercialUseCls:
         stream.seek(0)
         test_result = stream.read()
         return test_result
+
+
+def get_textfsm_template(template_snippet, author='', email='',
+                         company='', description=''):
+    builder = TemplateBuilder(user_data=template_snippet, author=author,
+                              email=email, company=company, description=description)
+    textfsm_tmpl = builder.template
+    return textfsm_tmpl
+
+
+def verify(template_snippet, test_data,
+           expected_rows_count=None, expected_result=None,
+           ignore_space=True):
+    builder = TemplateBuilder(user_data=template_snippet, test_data=test_data)
+    is_verified = builder.verify(expected_rows_count=expected_rows_count,
+                                 expected_result=expected_result,
+                                 ignore_space=ignore_space)
+    return is_verified
