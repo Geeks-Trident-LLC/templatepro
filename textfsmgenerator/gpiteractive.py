@@ -2,7 +2,7 @@ import re
 
 from regexapp import TextPattern
 
-from genericlib import STRING, NUMBER, PATTERN, TEXT, SYMBOL, Misc
+from genericlib import STRING, NUMBER, PATTERN, SYMBOL, Misc
 from genericlib.constpattern import get_ref_pattern_by_name
 from textfsmgenerator.gp import RuntimeException, TranslatedPattern, LData
 
