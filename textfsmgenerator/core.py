@@ -752,8 +752,10 @@ class NonCommercialUseCls:
         test_data = str(test_data)
         if not test_data:
             raise NoTestDataError("Please provide valid test data.")
-        func = self.get_tresult_v2 if self.is_multi_test_data else self.get_tresult_v1
-        test_result = func(test_data)
+        if self.is_multi_test_data:
+            test_result = self.get_tresult_v2(test_data)
+        else:
+            test_result = self.get_tresult_v1(test_data)
         return test_result
 
     def get_tresult_v1(self, test_data):
