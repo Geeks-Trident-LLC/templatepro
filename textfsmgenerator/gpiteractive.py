@@ -348,6 +348,33 @@ class EditingSnippet(LData):
                     )
 
     def apply_capture(self):
+        """
+        Apply capture rules to variables defined in the capture string.
+
+        This method parses the `self.capture` string into variable names,
+        handles ranges (e.g., "1:3"), lists (e.g., "a,b,c"), and optional
+        empty markers (e.g., "orEmpty"). It then marks the corresponding
+        elements as captured and optionally empty.
+
+        Steps
+        -----
+        1. Split the capture string by spaces.
+        2. Normalize items by removing commas and replacing "orEmpty" markers.
+        3. Expand ranges into sequential variable names (e.g., v1, v2, v3).
+        4. Parse comma-separated identifiers into variable names.
+        5. For each variable name, locate the element and mark it captured.
+
+        Raises
+        ------
+        EditingSnippetActionCaptureRTError
+            If a variable range is invalid or a variable cannot be found.
+
+        Side Effects
+        ------------
+        - Sets `self.is_capture_applied` to True if any capture is applied.
+        - Calls `node.set_captured()` and optionally `node.set_empty()` on
+          matched elements.
+        """
         if not self.capture:
             return
 
