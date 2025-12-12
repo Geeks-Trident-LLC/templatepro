@@ -1,4 +1,4 @@
 textfsm
 genericlib
-regexbuilder
+regexapp
 pyyaml

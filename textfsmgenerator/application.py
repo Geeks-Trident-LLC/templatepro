@@ -777,11 +777,17 @@ class Application:
             frame, text='Pypi.com Dependencies:', bold=True
         ).grid(row=2, column=0, sticky=tk.W)
 
-        # textFSM Generator package
+        # regex app package
         self.create_custom_label(
-            frame, text=Data.regexbuilder_text,
-            link=Data.regexbuilder_link
+            frame, text=Data.gtregexapp_text,
+            link=Data.gtregexapp_link
         ).grid(row=3, column=0, padx=(20, 0), sticky=tk.W)
+
+        # genericlib package
+        self.create_custom_label(
+            frame, text=Data.gtgenlib_text,
+            link=Data.gtgenlib_link
+        ).grid(row=4, column=0, padx=(20, 0), sticky=tk.W)
 
         # TextFSM package
         self.create_custom_label(
@@ -1044,10 +1050,10 @@ class Application:
                 self.set_title(title=title)
             except TemplateBuilderInvalidFormat as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
             except Exception as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
                 kwargs = self.get_template_args()
                 factory = TemplateBuilder(user_data=user_data, debug=True, **kwargs)
                 fmt = '# Please fix user_data to produce a good template\n{}'
@@ -1297,7 +1303,7 @@ class Application:
                 self.copy_text_btn.config(state=tk.NORMAL)
             except Exception as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
 
         def callback_unittest_btn():
             if self.snapshot.test_data is None:  # noqa
@@ -1335,7 +1341,7 @@ class Application:
                 self.copy_text_btn.config(state=tk.NORMAL)
             except Exception as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
 
         def callback_pytest_btn():
             if self.snapshot.test_data is None:  # noqa
@@ -1373,7 +1379,7 @@ class Application:
                 self.copy_text_btn.config(state=tk.NORMAL)
             except Exception as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
 
         def callback_test_data_btn():
             if self.snapshot.test_data is None:  # noqa
@@ -1430,7 +1436,7 @@ class Application:
                 template = self.snapshot.template.strip()   # noqa
                 if not template:
                     error = '{}: {}'.format(type(ex).__name__, ex)
-                    create_msgbox(title='RegexBuilder Error', error=error)
+                    create_msgbox(title='RegexApp Error', error=error)
                     return
 
             stream = StringIO(template)
@@ -1621,7 +1627,7 @@ class Application:
                     self.set_title(title=title)
             except Exception as ex:
                 error = '{}: {}'.format(type(ex).__name__, ex)
-                create_msgbox(title='RegexBuilder Error', error=error)
+                create_msgbox(title='RegexApp Error', error=error)
 
         def callback_app_backup_save_btn():
             user_template = UserTemplate()

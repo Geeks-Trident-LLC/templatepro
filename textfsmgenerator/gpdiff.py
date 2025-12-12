@@ -2,9 +2,9 @@ import re
 from difflib import ndiff
 from itertools import combinations
 
-from regexbuilder import TextPattern        # noqa
-from regexbuilder import ElementPattern     # noqa
-from regexbuilder import LinePattern        # noqa
+from regexapp import TextPattern        # noqa
+from regexapp import ElementPattern     # noqa
+from regexapp import LinePattern        # noqa
 
 from genericlib import STRING, PATTERN, Misc, NUMBER, INDEX
 from genericlib import Text

@@ -9,7 +9,7 @@ from textfsmgenerator.gp import TranslatedMixedNumberPattern
 from textfsmgenerator.gp import TranslatedLetterPattern
 from textfsmgenerator.gp import TranslatedLettersPattern
 
-from genericlib.gp import TranslatedAlphabetNumericPattern
+from textfsmgenerator.gp import TranslatedAlphabetNumericPattern
 
 
 class TestTranslatedDigitPattern:

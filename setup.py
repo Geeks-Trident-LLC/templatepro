@@ -17,9 +17,9 @@ setup(
     maintainer_email='tuyen@geekstrident.com',
     install_requires=[
         'textfsm',
+        'pyyaml',
         'genericlib',
-        'regexbuilder',
-        'pyyaml'
+        'regexapp',
     ],
     url='https://github.com/Geeks-Trident-LLC/textfsmgenerator',
     packages=find_packages(
@@ -32,7 +32,7 @@ setup(
     entry_points={
         'console_scripts': [
             'textfsmgenerator = textfsmgenerator.main:execute',
-            'template-pro = textfsmgenerator.application:execute',
+            'textfsmgenerator-gui = textfsmgenerator.application:execute',
         ]
     },
     classifiers=[

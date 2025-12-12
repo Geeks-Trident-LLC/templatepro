@@ -1,6 +1,6 @@
 import re
 
-from regexbuilder import TextPattern
+from regexapp import TextPattern
 
 from genericlib import STRING, NUMBER, PATTERN, TEXT, SYMBOL, Misc
 from genericlib.constpattern import get_ref_pattern_by_name

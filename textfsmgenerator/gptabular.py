@@ -4,7 +4,7 @@ import statistics
 import operator as op
 import re
 
-from regexbuilder import LinePattern
+from regexapp import LinePattern
 
 from genericlib import Misc, STRING, NUMBER, PATTERN, INDEX
 from textfsmgenerator.gp import RuntimeException, TranslatedPattern

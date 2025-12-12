@@ -7,8 +7,8 @@ from textfsm import TextFSM
 from io import StringIO
 from textwrap import dedent
 
-from regexbuilder import LinePattern
-from regexbuilder.core import enclose_string
+from regexapp import LinePattern
+from regexapp.core import enclose_string
 
 from genericlib import get_data_as_tabular
 from genericlib import Printer
