@@ -12,7 +12,7 @@ import yaml
 
 from genericlib import version as gtlib_version
 
-__version__ = '0.2.0a1'
+__version__ = '0.2.0a2'
 version = __version__
 __edition__ = 'Community'
 edition = __edition__
