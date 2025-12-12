@@ -749,6 +749,28 @@ class NonCommercialUseCls:
         return code_snippet
 
     def get_test_result(self, test_data):
+        """
+        Retrieve the test result for the given test data.
+
+        This method validates the provided test data, converts it to a string,
+        and delegates to either `get_tresult_v1` or `get_tresult_v2` depending
+        on whether multiple test data sets are supported.
+
+        Parameters
+        ----------
+        test_data : str or any
+            Input test data to be evaluated. Converted to string internally.
+
+        Returns
+        -------
+        str
+            The computed test result string from the appropriate handler.
+
+        Raises
+        ------
+        NoTestDataError
+            If the provided test data is empty or invalid.
+        """
         test_data = str(test_data)
         if not test_data:
             raise NoTestDataError("Please provide valid test data.")
