@@ -122,7 +122,8 @@ class Cli:
         m = re.match(pattern, self.options.user_data, re.I)
         if m:
             try:
-                with open(m.group('filename')) as stream:
+                filename = m.group('filename')
+                with open(filename) as stream:
                     self.options.user_data = stream.read()
             except Exception as ex:
                 failure = '*** {}: {}'.format(type(ex).__name__, ex)
