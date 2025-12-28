@@ -43,6 +43,7 @@ setup(
     },
     python_requires=">=3.9",
     include_package_data=True,
+    package_data={"": ["LICENSE", "README.md"]},
     entry_points={
         'console_scripts': [
             'textfsmgen = textfsmgen.main:execute',
