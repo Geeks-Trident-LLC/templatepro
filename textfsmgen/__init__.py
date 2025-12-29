@@ -1,6 +1,18 @@
-"""Top-level module for textFSM Generator.
+"""
+textfsmgen.__init__
+===================
 
-- allow end-user to create template or test script on GUI application.
+Top-level module for the `textfsmgen` package.
+
+This module initializes the package namespace and exposes the core
+classes and utilities for generating and managing TextFSM templates.
+It provides a unified entry point for pattern definitions, template
+builders, and helper functions used in parsing structured text.
+
+Notes
+-----
+Keeping all primary exports in `__init__.py` simplifies imports and
+ensures a consistent public API for end-users.
 """
 
 from textfsmgen.core import ParsedLine
