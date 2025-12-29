@@ -39,6 +39,7 @@ from textfsm import TextFSM
 
 from pprint import pformat
 from genericlib import get_data_as_tabular
+from genericlib import DotObject
 
 from textfsmgen import TemplateBuilder
 from textfsmgen.exceptions import TemplateBuilderInvalidFormat
@@ -138,21 +139,6 @@ def set_modal_dialog(dialog):
     dialog.wait_visibility()
     dialog.grab_set()
     dialog.wait_window()
-
-
-class Snapshot(dict):
-    """Snapshot for storing data."""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for attr, val in self.items():
-            if re.match(r'[a-z]\w*$', attr):
-                setattr(self, attr, val)
-
-    def update(self, *args, **kwargs):
-        super().update(*args, **kwargs)
-        for attr, val in self.items():
-            if re.match(r'[a-z]\w*$', attr):
-                setattr(self, attr, val)
 
 
 class UserTemplate:
@@ -436,7 +422,7 @@ class Application:
         self.root.bind("<Button-1>", lambda e: self.callback_focus(e))
 
         # datastore
-        self.snapshot = Snapshot()
+        self.snapshot = DotObject()
         self.snapshot.update(title='')
         self.snapshot.update(stored_title='')
         self.snapshot.update(user_data='')
