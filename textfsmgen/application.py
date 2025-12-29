@@ -143,16 +143,29 @@ def create_msgbox(title=None, error=None, warning=None, info=None,
 
 
 def set_modal_dialog(dialog):
-    """set dialog to become a modal dialog
+    """
+    Configure a Tkinter window to behave as a modal dialog.
+
+    A modal dialog prevents interaction with other windows in the
+    application until the dialog is closed.
 
     Parameters
     ----------
-    dialog (tkinter.TK): a dialog or window application.
+    dialog : tkinter.Tk
+        The dialog or window instance to configure as modal.
+
+    Notes
+    -----
+    - `transient` ensures the dialog is always on top of its parent.
+    - `wait_visibility` waits until the window is visible before grabbing focus.
+    - `grab_set` directs all events to the dialog, blocking other windows.
+    - `wait_window` blocks execution until the dialog is closed.
     """
-    dialog.transient(dialog.master)
-    dialog.wait_visibility()
-    dialog.grab_set()
-    dialog.wait_window()
+    if dialog.master is not None:
+        dialog.transient(dialog.master)
+        dialog.wait_visibility()
+        dialog.grab_set()
+        dialog.wait_window()
 
 
 class UserTemplate:
