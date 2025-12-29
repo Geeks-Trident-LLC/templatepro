@@ -124,7 +124,7 @@ def create_msgbox(title=None, error=None, warning=None, info=None,
         - Boolean values for confirmation dialogs
         - None for canceled dialogs
     """
-    msg_func_pairs = (
+    msg_func_pairs = (      # noqa
         (error, messagebox.showerror),
         (warning, messagebox.showwarning),
         (info, messagebox.showinfo),
@@ -438,8 +438,8 @@ class Application:
         self.test_data_btn = None
         self.result_btn = None
         self.store_btn = None
-        self.search_chkbox = None
-        self.template_name_txtbox = None
+        self.search_checkbox = None
+        self.template_name_textbox = None
         self.lookup_btn = None
         self.close_lookup_btn = None
         self.close_backup_btn = None
@@ -477,13 +477,13 @@ class Application:
         self.company_var = tk.StringVar()
         self.template_name_var = tk.StringVar()
         self.description_var = tk.StringVar()
-        self.search_chkbox_var = tk.BooleanVar()
+        self.search_checkbox_var = tk.BooleanVar()
 
         # variables: app
-        self.test_data_chkbox_var = tk.BooleanVar()
-        self.template_chkbox_var = tk.BooleanVar()
-        self.tabular_chkbox_var = tk.BooleanVar()
-        self.tabular_chkbox_var.set(True)
+        self.test_data_checkbox_var = tk.BooleanVar()
+        self.template_checkbox_var = tk.BooleanVar()
+        self.tabular_checkbox_var = tk.BooleanVar()
+        self.tabular_checkbox_var.set(True)
 
         # method call
         self.set_title()
@@ -512,9 +512,9 @@ class Application:
         self.company_var.set('')
         self.description_var.set('')
 
-        self.test_data_chkbox_var.set(False)
-        self.template_chkbox_var.set(False)
-        self.tabular_chkbox_var.set(True)
+        self.test_data_checkbox_var.set(False)
+        self.template_checkbox_var.set(False)
+        self.tabular_checkbox_var.set(True)
 
     @classmethod
     def get_textarea(cls, widget):
@@ -580,8 +580,8 @@ class Application:
         title (str): a title.  Default is empty.
         """
         widget = widget or self.root
-        btitle = self._base_title
-        title = '{} - {}'.format(title, btitle) if title else btitle
+        base_title = self._base_title
+        title = '{} - {}'.format(title, base_title) if title else base_title
         widget.title(title)
 
     def shift_to_main_app(self):
@@ -689,8 +689,8 @@ class Application:
         filename = filedialog.askopenfilename(filetypes=filetypes)
         if filename:
             with open(filename) as stream:
-                if self.search_chkbox_var.get():
-                    self.search_chkbox.invoke()
+                if self.search_checkbox_var.get():
+                    self.search_checkbox.invoke()
 
                 if self.snapshot.curr_app == 'backup_app':  # noqa
                     self.close_backup_btn.invoke()
@@ -716,8 +716,8 @@ class Application:
         filename = filedialog.askopenfilename(filetypes=filetypes)
         if filename:
             with open(filename) as stream:
-                if self.search_chkbox_var.get():
-                    self.search_chkbox.invoke()
+                if self.search_checkbox_var.get():
+                    self.search_checkbox.invoke()
 
                 if self.snapshot.curr_app == 'backup_app':  # noqa
                     self.close_backup_btn.invoke()
@@ -821,21 +821,21 @@ class Application:
         ).grid(row=4, column=1, padx=(20, 0), pady=(0, 10), sticky=tk.W)
 
         # license textbox
-        lframe = self.LabelFrame(
+        label_frame = self.LabelFrame(
             paned_window, height=200, width=450,
             text=Data.license_name
         )
-        paned_window.add(lframe, weight=7)
+        paned_window.add(label_frame, weight=7)
 
         width = 58 if self.is_macos else 51
         height = 18 if self.is_macos else 14 if self.is_linux else 15
-        txtbox = self.TextArea(lframe, width=width, height=height, wrap='word')
-        txtbox.grid(row=0, column=0, padx=5, pady=5)
-        scrollbar = ttk.Scrollbar(lframe, orient=tk.VERTICAL, command=txtbox.yview)
+        textbox = self.TextArea(label_frame, width=width, height=height, wrap='word')
+        textbox.grid(row=0, column=0, padx=5, pady=5)
+        scrollbar = ttk.Scrollbar(label_frame, orient=tk.VERTICAL, command=textbox.yview)
         scrollbar.grid(row=0, column=1, sticky='nsew')
-        txtbox.config(yscrollcommand=scrollbar.set)
-        txtbox.insert(tk.INSERT, Data.license)
-        txtbox.config(state=tk.DISABLED)
+        textbox.config(yscrollcommand=scrollbar.set)
+        textbox.insert(tk.INSERT, Data.license)
+        textbox.config(state=tk.DISABLED)
 
         # footer - copyright
         frame = self.Frame(paned_window, width=450, height=20)
@@ -866,77 +866,77 @@ class Application:
         top_frame.pack(fill=tk.BOTH, expand=True)
 
         # Settings - Arguments
-        lframe_args = self.LabelFrame(
+        label_frame_args = self.LabelFrame(
             top_frame, height=100, width=380,
             text='Arguments'
         )
-        lframe_args.grid(row=0, column=0, padx=10, pady=(5, 0), sticky=tk.W)
+        label_frame_args.grid(row=0, column=0, padx=10, pady=(5, 0), sticky=tk.W)
 
         pady = 0 if self.is_macos else 1
 
         self.Label(
-            lframe_args, text='Author'
+            label_frame_args, text='Author'
         ).grid(row=0, column=0, columnspan=2, padx=2, pady=pady, sticky=tk.W+tk.N)
         self.TextBox(
-            lframe_args, width=45,
+            label_frame_args, width=45,
             textvariable=self.author_var
         ).grid(row=0, column=2, columnspan=4, padx=2, pady=pady, sticky=tk.W)
 
         self.Label(
-            lframe_args, text='Email'
+            label_frame_args, text='Email'
         ).grid(row=1, column=0, columnspan=2, padx=2, pady=pady, sticky=tk.W+tk.N)
         self.TextBox(
-            lframe_args, width=45,
+            label_frame_args, width=45,
             textvariable=self.email_var
         ).grid(row=1, column=2, columnspan=4, padx=2, pady=pady, sticky=tk.W)
 
         self.Label(
-            lframe_args, text='Company'
+            label_frame_args, text='Company'
         ).grid(row=2, column=0, columnspan=2, padx=2, pady=pady, sticky=tk.W+tk.N)
         self.TextBox(
-            lframe_args, width=45,
+            label_frame_args, width=45,
             textvariable=self.company_var
         ).grid(row=2, column=2, columnspan=4, padx=2, pady=pady, sticky=tk.W)
 
         self.Label(
-            lframe_args, text='Filename'
+            label_frame_args, text='Filename'
         ).grid(row=4, column=0, columnspan=2, padx=2, pady=pady, sticky=tk.W+tk.N)
         self.TextBox(
-            lframe_args, width=45,
+            label_frame_args, width=45,
             textvariable=self.filename_var
         ).grid(row=4, column=2, columnspan=4, padx=2, pady=pady, sticky=tk.W)
 
         self.Label(
-            lframe_args, text='Description'
+            label_frame_args, text='Description'
         ).grid(row=5, column=0, columnspan=2, padx=2, pady=pady, sticky=tk.W+tk.N)
         self.TextBox(
-            lframe_args, width=45,
+            label_frame_args, width=45,
             textvariable=self.description_var
         ).grid(row=5, column=2, columnspan=4, padx=2, pady=(pady, 10), sticky=tk.W)
 
         # Settings - Arguments
-        lframe_app = self.LabelFrame(
+        label_frame_app = self.LabelFrame(
             top_frame, height=120, width=380,
             text='App'
         )
-        lframe_app.grid(row=1, column=0, padx=10, pady=1, sticky=tk.W+tk.N)
+        label_frame_app.grid(row=1, column=0, padx=10, pady=1, sticky=tk.W+tk.N)
 
         self.CheckBox(
-            lframe_app, text='Test Data',
+            label_frame_app, text='Test Data',
             onvalue=True, offvalue=False,
-            variable=self.test_data_chkbox_var
+            variable=self.test_data_checkbox_var
         ).grid(row=0, column=0, padx=2)
 
         self.CheckBox(
-            lframe_app, text='Template',
+            label_frame_app, text='Template',
             onvalue=True, offvalue=False,
-            variable=self.template_chkbox_var
+            variable=self.template_checkbox_var
         ).grid(row=0, column=1, padx=20)
 
         self.CheckBox(
-            lframe_app, text='Tabular',
+            label_frame_app, text='Tabular',
             onvalue=True, offvalue=False,
-            variable=self.tabular_chkbox_var
+            variable=self.tabular_checkbox_var
         ).grid(row=0, column=2, padx=2)
 
         # OK and Default buttons
@@ -959,8 +959,8 @@ class Application:
 
     def callback_preferences_user_template(self):
         """Callback for Menu Preferences > User Template"""
-        self.search_chkbox_var.set(False)
-        self.search_chkbox.invoke()
+        self.search_checkbox_var.set(False)
+        self.search_checkbox.invoke()
 
     def build_menu(self):
         """Build menubar for Regex GUI."""
@@ -1197,7 +1197,7 @@ class Application:
                     self.test_data_btn_var.set('Test Data')
                     self.build_btn_var.set('Build')
                     self.template_name_var.set('')
-                    self.search_chkbox_var.set(False)
+                    self.search_checkbox_var.set(False)
                     # self.root.clipboard_clear()
                     title = 'Clearing Input Text + Test Data'
 
@@ -1468,16 +1468,16 @@ class Application:
 
             lst = []
 
-            if self.template_chkbox_var.get() and template:
+            if self.template_checkbox_var.get() and template:
                 lst.append('Template')
                 result += fmt.format(template) if result else template
 
-            if self.test_data_chkbox_var.get() and test_data:  # noqa
+            if self.test_data_checkbox_var.get() and test_data:  # noqa
                 lst.append('Test Data')
                 result += fmt.format(test_data) if result else test_data
 
             lst.append('Test Result')
-            if rows and self.tabular_chkbox_var.get():
+            if rows and self.tabular_checkbox_var.get():
                 tabular_data = get_data_as_tabular(rows)
                 result += fmt.format(tabular_data) if result else tabular_data
             else:
@@ -1516,17 +1516,17 @@ class Application:
                 self.set_textarea(self.result_textarea, user_template.read())
                 self.shift_to_backup_app()
 
-        def callback_search_chkbox():
+        def callback_search_checkbox():
             user_template = UserTemplate()
             if not user_template.is_exist():
                 title = 'User Template File Not Found'
                 fmt = 'The feature is only available when {!r} is existed.'
                 info = fmt.format(user_template.filename)
                 create_msgbox(title=title, info=info)
-                self.search_chkbox_var.set(False)
+                self.search_checkbox_var.set(False)
                 return
 
-            if self.search_chkbox_var.get():
+            if self.search_checkbox_var.get():
                 self.open_file_btn.configure(state=tk.DISABLED)
                 self.copy_text_btn.configure(state=tk.DISABLED)
                 self.save_as_btn.configure(state=tk.DISABLED)
@@ -1543,7 +1543,7 @@ class Application:
                 self.input_textarea.configure(state=tk.DISABLED)
                 self.lookup_btn.grid(row=0, column=2, sticky=tk.W)
                 self.close_lookup_btn.grid(row=0, column=3, sticky=tk.W)
-                self.template_name_txtbox.focus()
+                self.template_name_textbox.focus()
 
                 input_txt = Application.get_textarea(self.input_textarea)
                 result_txt = Application.get_textarea(self.result_textarea)
@@ -1804,22 +1804,22 @@ class Application:
         # customize x padding for search checkbox
         x = 0 if self.is_macos else 6 if self.is_linux else 2
         # search checkbox
-        self.search_chkbox = self.CheckBox(
+        self.search_checkbox = self.CheckBox(
             frame, text='search',
             name='main_search_checkbox',
-            variable=self.search_chkbox_var,
+            variable=self.search_checkbox_var,
             onvalue=True, offvalue=False,
-            command=callback_search_chkbox
+            command=callback_search_checkbox
         )
-        self.search_chkbox.grid(row=0, column=0, padx=(0, x), sticky=tk.W)
+        self.search_checkbox.grid(row=0, column=0, padx=(0, x), sticky=tk.W)
 
         # template name textbox
-        self.template_name_txtbox = self.TextBox(
+        self.template_name_textbox = self.TextBox(
             frame, width=46,
             name='main_template_name_textbox',
             textvariable=self.template_name_var
         )
-        self.template_name_txtbox.grid(row=0, column=1, sticky=tk.W)
+        self.template_name_textbox.grid(row=0, column=1, sticky=tk.W)
 
         self.lookup_btn = self.Button(
             frame, text='Lookup',
@@ -1831,7 +1831,7 @@ class Application:
         self.close_lookup_btn = self.Button(
             frame, text='Close',
             name='main_close_lookup_btn',
-            command=self.search_chkbox.invoke,
+            command=self.search_checkbox.invoke,
             width=btn_width
         )
 
