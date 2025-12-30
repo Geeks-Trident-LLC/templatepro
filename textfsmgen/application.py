@@ -3237,7 +3237,7 @@ class Application:
         # def callback_rf_btn():
         #     create_msgbox(
         #         title='Robotframework feature',
-        #         info="Robotframework button is available in Pro or Enterprise Edition."
+        #         info="Robotframework button is in release 1.x and later"
         #     )
 
         # customize width for buttons

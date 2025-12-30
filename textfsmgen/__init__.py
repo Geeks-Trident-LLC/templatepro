@@ -17,7 +17,6 @@ ensures a consistent public API for end-users.
 
 from textfsmgen.core import ParsedLine
 from textfsmgen.core import TemplateBuilder
-from textfsmgen.core import NonCommercialUseCls
 from textfsmgen.config import version
 from textfsmgen.config import edition
 
@@ -27,7 +26,6 @@ __edition__ = edition
 __all__ = [
     'ParsedLine',
     'TemplateBuilder',
-    'NonCommercialUseCls',
     'version',
     'edition',
 ]
