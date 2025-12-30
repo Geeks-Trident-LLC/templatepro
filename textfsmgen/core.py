@@ -559,7 +559,8 @@ class TemplateBuilder:
             template=enclose_string(self.template),
             test_data=enclose_string(self.test_data)
         )
-        file.write(self.filename, script)
+        if self.filename:
+            file.write(self.filename, script)
         return script
 
     def create_pytest(self):
@@ -602,7 +603,8 @@ class TemplateBuilder:
             test_data=enclose_string(self.test_data)
         )
 
-        file.write(self.filename, script)
+        if self.filename:
+            file.write(self.filename, script)
         return script
 
     def create_python_test(self):
@@ -666,7 +668,8 @@ class TemplateBuilder:
             test_data=enclose_string(self.test_data)
         )
 
-        file.write(self.filename, script)
+        if self.filename:
+            file.write(self.filename, script)
         return script
 
 
