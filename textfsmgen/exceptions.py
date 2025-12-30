@@ -1,8 +1,28 @@
-"""Exception classes for the TextFSM Generator.
+"""
+textfsmgen.exceptions
+=====================
 
-This module defines custom exceptions used throughout the TextFSM
-Generator library to handle template parsing, building, and validation
-errors in a structured way.
+Custom exception classes for the TextFSM Generator library.
+
+This module defines application‑specific exceptions that provide
+clearer error reporting and handling across the `textfsmgen` package.
+By centralizing exception definitions, the library ensures consistent
+messaging and easier debugging for both developers and end users.
+
+Purpose
+-------
+- Provide meaningful exception types for template generation, parsing,
+  and configuration errors.
+- Improve error handling by distinguishing between different failure
+  scenarios.
+- Support GUI and CLI workflows with user‑friendly error messages.
+
+Notes
+-----
+- All custom exceptions inherit from `TextFSMGenError` to allow
+  consistent catching at a higher level.
+- Exception messages are designed to be user‑friendly for GUI dialogs
+  while still informative for developers.
 """
 
 
