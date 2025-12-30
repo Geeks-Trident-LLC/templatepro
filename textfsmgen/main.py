@@ -279,11 +279,6 @@ class Cli:
            - Otherwise, normalize inline configuration text into YAML format.
            - Parse configuration into a dictionary and store in `self.kwargs`.
 
-        Parameters
-        ----------
-        None
-            Operates on `self.options` attributes populated by argparse.
-
         Returns
         -------
         bool
@@ -364,11 +359,6 @@ class Cli:
         generation, the process exits gracefully with a descriptive
         error message.
 
-        Parameters
-        ----------
-        None
-            Operates on `self.options.user_data` and `self.kwargs` attributes.
-
         Returns
         -------
         None
@@ -414,12 +404,6 @@ class Cli:
            - otherwise  → `create_python_test`
         3. Attempt to generate the test script using user data and test data.
         4. Exit gracefully with the generated script or an error message.
-
-        Parameters
-        ----------
-        None
-            Operates on `self.options.platform`, `self.options.user_data`,
-            `self.options.test_data`, and `self.kwargs`.
 
         Returns
         -------
@@ -483,12 +467,6 @@ class Cli:
         4. Call `factory.verify(**kwargs)` to perform the test.
         5. Exit with success or failure depending on the outcome.
 
-        Parameters
-        ----------
-        None
-            Operates on `self.options.user_data`, `self.options.test_data`,
-            and `self.kwargs`.
-
         Returns
         -------
         None
@@ -547,11 +525,6 @@ class Cli:
            - Run template verification tests.
            - Generate a test script for the selected platform.
         6. Launch the GUI application if the `--gui` flag is set.
-
-        Parameters
-        ----------
-        None
-            Operates on `self.options` attributes populated by argparse.
 
         Returns
         -------
