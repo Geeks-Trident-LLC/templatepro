@@ -4,7 +4,8 @@ from regexapp import TextPattern
 
 from genericlib import STRING, NUMBER, PATTERN, SYMBOL, Misc
 from genericlib.constpattern import get_ref_pattern_by_name
-from textfsmgen.gp import RuntimeException, TranslatedPattern, LData
+from textfsmgen.gp import TranslatedPattern, LData
+from textfsmgen.exceptions import RuntimeException
 
 
 class SnippetElement(RuntimeException):

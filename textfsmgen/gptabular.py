@@ -7,7 +7,8 @@ import re
 from regexapp import LinePattern
 
 from genericlib import Misc, STRING, NUMBER, PATTERN, INDEX
-from textfsmgen.gp import RuntimeException, TranslatedPattern
+from textfsmgen.gp import TranslatedPattern
+from textfsmgen.exceptions import RuntimeException
 
 from textfsmgen.gpcommon import GPCommon
 

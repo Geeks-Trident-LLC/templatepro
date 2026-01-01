@@ -1,3 +1,44 @@
+"""
+textfsmgen.gp
+=============
+
+Grammar and parsing utilities for the TextFSM Generator.
+
+This module provides helper functions, classes, and constants used to
+interpret user-defined template snippets into normalized TextFSM grammar.
+It acts as the parsing backbone of the TextFSM Generator, ensuring that
+raw user input (lines, flags, operators, metadata) is consistently
+translated into valid template statements.
+
+Purpose
+-------
+- Define grammar rules and parsing logic for TextFSM templates.
+- Normalize user input into canonical TextFSM syntax.
+- Support advanced options such as flags, operators, and metadata.
+- Provide reusable parsing utilities for other core modules.
+
+Contents
+--------
+- Grammar definitions for template statements.
+- Parsing functions for variables, operators, and flags.
+- Utilities for handling metadata options (Filldown, Fillup, Key, List, Required).
+- Error classes for invalid grammar or parsing failures.
+
+Usage
+-----
+This module is typically used internally by higher-level components
+such as `textfsmgen.core.TemplateBuilder` and `textfsmgen.main`.
+Direct usage is uncommon, but developers may import it when extending
+or debugging grammar rules.
+
+Notes
+-----
+- All parsing functions return normalized TextFSM statements or raise
+  a `TemplateParsedLineError` if input is invalid.
+- This module is designed for internal use; external callers should
+  prefer the `TemplateBuilder` interface.
+"""
+
 import re
 
 from genericlib import NUMBER
@@ -7,18 +48,8 @@ from genericlib import TEXT
 from genericlib import SYMBOL
 
 from genericlib import Misc
-from genericlib import MiscFunction
 
-
-class RuntimeException:
-    def raise_runtime_error(self, name='', msg=''):
-        name = name.strip()
-        obj = name or self
-        MiscFunction.raise_runtime_error(obj=obj, msg=msg)
-
-    @classmethod
-    def do_raise_runtime_error(cls, obj=None, msg=''):
-        MiscFunction.raise_runtime_error(obj=obj, msg=msg)
+from textfsmgen.exceptions import RuntimeException
 
 
 class LData(RuntimeException):
