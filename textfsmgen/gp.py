@@ -53,31 +53,93 @@ from textfsmgen.exceptions import RuntimeException
 
 
 class LData(RuntimeException):
+    """
+    Line data wrapper for string input with utilities to
+    inspect leading and trailing whitespace.
+
+    This class normalizes input by storing both the raw string
+    and a stripped version. It provides properties to query
+    leading/trailing whitespace and boolean flags to indicate
+    their presence.
+
+    Parameters
+    ----------
+    data : Any
+        Input data to be wrapped. Converted to string internally.
+
+    Attributes
+    ----------
+    raw_data : str
+        Original string representation of the input.
+    data : str
+        Stripped version of `raw_data` with leading/trailing
+        whitespace removed.
+    """
     def __init__(self, data):
         self.raw_data = str(data)
         self.data = self.raw_data.strip()
 
     def __call__(self, *args, **kwargs):
+        """
+        Create a new instance of `LData` when the object is called.
+
+        Returns
+        -------
+        LData
+            A new line data instance initialized with the provided arguments.
+        """
         new_instance = self.__class__(*args, **kwargs)
         return new_instance
 
     @property
     def leading(self):
+        """
+        Extract leading whitespace from the raw data.
+
+        Returns
+        -------
+        str
+            Leading whitespace characters, or an empty string if none.
+        """
         leading_spaces = Misc.get_leading_line(self.raw_data)
         return leading_spaces
 
     @property
     def trailing(self):
+        """
+        Extract trailing whitespace from the raw data.
+
+        Returns
+        -------
+        str
+            Trailing whitespace characters, or an empty string if none.
+        """
         trailing_spaces = Misc.get_trailing_line(self.raw_data)
         return trailing_spaces
 
     @property
     def is_leading(self):
+        """
+        Check if the raw data contains leading whitespace.
+
+        Returns
+        -------
+        bool
+            True if leading whitespace exists, False otherwise.
+        """
         chk = self.leading != STRING.EMPTY
         return chk
 
     @property
     def is_trailing(self):
+        """
+        Check if the raw data contains trailing whitespace.
+
+        Returns
+        -------
+        bool
+            True if trailing whitespace exists, False otherwise.
+        """
         chk = self.trailing != STRING.EMPTY
         return chk
 
