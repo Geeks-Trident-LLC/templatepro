@@ -145,7 +145,22 @@ class LData(RuntimeException):
 
 
 class TranslatedPattern(RuntimeException):
+    """
+    Represents a translated text pattern used in FSM (Finite State Machine)
+    generation, providing utilities to normalize, store, and manipulate
+    regex-compatible string patterns.
 
+    The `TranslatedPattern` class is designed to wrap raw text input and
+    convert it into a structured, regex-ready representation. It supports
+    translation of text into pattern segments, validation of pattern syntax,
+    and convenient access to both the original and processed forms.
+
+    Notes
+    -----
+    - This class is primarily used internally by the `textfsmgen.gp` module
+      to generate and validate regex patterns for parsing text.
+    - Invalid patterns raise `TextPatternError`.
+    """
     def __init__(self, data, *other, name='',
                  defined_pattern='', defined_patterns=None, ref_names=None,
                  singular_name='', singular_pattern='', root_name=''):
@@ -163,46 +178,135 @@ class TranslatedPattern(RuntimeException):
         self.process()
 
     def __len__(self):
+        """
+        Determine whether the pattern is non-empty.
+
+        This method overrides `__len__` to return a boolean value
+        instead of the usual integer length. It checks whether the
+        internal `_pattern` string is empty.
+
+        Returns
+        -------
+        bool
+            True if `_pattern` is not empty, False if it equals
+            `STRING.EMPTY`.
+        """
         chk = self._pattern != STRING.EMPTY
         return chk
 
     def __call__(self, *args, **kwargs):
+        """
+        Enable the object to be invoked as a callable, returning a new instance
+        of the same class.
+
+        This method allows the class instance to behave like a factory: when
+        called, it constructs and returns a new instance of `self.__class__`
+        initialized with the provided arguments.
+
+        Parameters
+        ----------
+        *args : arguments
+            Positional arguments forwarded to the class constructor.
+        **kwargs : keyword arguments
+            Keyword arguments forwarded to the class constructor.
+
+        Returns
+        -------
+        Self
+            A new instance of the same class, initialized with the given
+            arguments.
+        """
         new_instance = self.__class__(*args, **kwargs)
         return new_instance
 
     @property
     def translated(self):
+        """
+        Indicate whether the pattern has been translated into a non-empty value.
+
+        Returns
+        -------
+        bool
+            True if `_pattern` is non-empty (translation exists),
+            False if `_pattern` equals `STRING.EMPTY`.
+        """
         chk = self._pattern != STRING.EMPTY
         return chk
 
     @property
     def actual_name(self):
+        """
+        Resolve the effective name of the current pattern.
+
+        This property attempts to map the internal `_pattern` to a
+        corresponding reference name if both `defined_patterns` and
+        `ref_names` are available. If no mapping exists, it falls
+        back to the instance's `name` attribute.
+
+        Returns
+        -------
+        str
+            The resolved name of the pattern. Either:
+            - The reference name associated with `_pattern`, or
+            - The fallback `name` attribute if no mapping is found.
+        """
         if self.defined_patterns and self.ref_names:
-            return self.ref_names[self.defined_patterns.index(self._pattern)]
+            idx = self.defined_patterns.index(self._pattern)
+            return self.ref_names[idx]
         else:
             return self.name
 
     @property
     def lessen_name(self):
+        """
+        Resolve a simplified (lessened) name for the current pattern.
+
+        This property maps certain reference names into broader, normalized
+        categories to reduce redundancy. If both `defined_patterns` and
+        `ref_names` are available, it attempts to locate the current `_pattern`
+        in `defined_patterns` and retrieve the corresponding reference name.
+        That name is then mapped to a simplified category using a lookup table.
+        If no mapping exists, or if the pattern cannot be resolved, the
+        instance's `name` attribute is returned.
+
+        Returns
+        -------
+        str
+            The simplified name of the pattern. Either:
+            - A normalized category from the lookup table, or
+            - The fallback `name` attribute if no mapping is found.
+
+        Notes
+        -----
+        - Assumes `defined_patterns` and `ref_names` are aligned lists.
+        - The lookup table groups related names into categories such as
+          "puncts_or_group", "word_or_group", "mixed_word_or_group",
+          and "non_whitespaces_or_group".
+        """
         if self.defined_patterns and self.ref_names:
-            name = self.ref_names[self.defined_patterns.index(self._pattern)]
+            idx = self.defined_patterns.index(self._pattern)
+            name = self.ref_names[idx]
 
             tbl = dict(
+                # punctuation-related groups
                 puncts_or_group="puncts_or_group",
                 puncts_group="puncts_or_group",
                 puncts_phrase="puncts_or_group",
                 puncts_or_phrase="puncts_or_group",
 
+                # word-related groups
                 word_or_group="word_or_group",
                 word_group="word_or_group",
                 phrase="word_or_group",
                 words="word_or_group",
 
+                # mixed word groups
                 mixed_word_or_group="mixed_word_or_group",
                 mixed_words="mixed_word_or_group",
                 mixed_phrase="mixed_word_or_group",
                 mixed_word_group="mixed_word_or_group",
 
+                # non-whitespace groups
                 non_whitespaces_or_group="non_whitespaces_or_group",
                 non_whitespaces_or_phrase="non_whitespaces_or_group",
                 non_whitespaces_phrase="non_whitespaces_or_group",
@@ -215,272 +319,948 @@ class TranslatedPattern(RuntimeException):
 
     @property
     def pattern(self):
+        """
+        Access the underlying regex pattern string.
+
+        This property provides read-only access to the internal `_pattern`
+        attribute, which represents the current regex pattern associated
+        with the instance.
+
+        Returns
+        -------
+        str
+            The raw regex pattern string stored in `_pattern`.
+        """
         return self._pattern
 
     @property
     def lessen_pattern(self):
+        """
+        Resolve a simplified (lessened) pattern for the current instance.
+
+        This property attempts to map the current `_pattern` into a broader,
+        normalized category using `lessen_name`. If both `defined_patterns`
+        and `ref_names` are available, it looks up the index of `lessen_name`
+        in `ref_names` and returns the corresponding entry from
+        `defined_patterns`. If no mapping exists, or if the lists are missing,
+        the raw `pattern` is returned as a fallback.
+
+        Returns
+        -------
+        str
+            The simplified regex pattern string. Either:
+            - A normalized pattern from `defined_patterns`, or
+            - The fallback `pattern` attribute if no mapping is found.
+
+        Notes
+        -----
+        - Assumes `defined_patterns` and `ref_names` are aligned lists.
+        - Falls back gracefully if `lessen_name` is not present in `ref_names`.
+        """
         if self.defined_patterns and self.ref_names:
             lessen_name = self.lessen_name
-            lessen_pat = self.defined_patterns[self.ref_names.index(lessen_name)]
+            idx = self.ref_names.index(lessen_name)
+            lessen_pat = self.defined_patterns[idx]
             return lessen_pat
         else:
             return self.pattern
 
     @property
     def root_pattern(self):
-        tbl = dict(non_whitespace=PATTERN.NON_WHITESPACE,
-                   non_whitespaces=PATTERN.NON_WHITESPACES,
-                   non_whitespaces_or_group=PATTERN.NON_WHITESPACES_OR_GROUP)
+        tbl = dict(
+            non_whitespace=PATTERN.NON_WHITESPACE,
+            non_whitespaces=PATTERN.NON_WHITESPACES,
+            non_whitespaces_or_group=PATTERN.NON_WHITESPACES_OR_GROUP
+        )
         root_pattern = tbl.get(self.root_name, PATTERN.NON_WHITESPACES_OR_GROUP)
         return root_pattern
 
     def process(self):
+        """
+        Resolve and assign the active regex pattern for the instance.
+
+        This method attempts to match the current input against a set of
+        defined patterns. If `defined_patterns` is available, it iterates
+        through them to find the first match:
+
+        - If `is_plural()` is True, only the last two patterns are checked.
+        - Otherwise, all patterns in `defined_patterns` are considered.
+        - On the first successful match, `_pattern` is set to that pattern.
+        - If no match is found, `_pattern` is set to `STRING.EMPTY`.
+
+        If `defined_patterns` is not available, the method falls back to
+        checking `defined_pattern` directly.
+
+        Returns
+        -------
+        None
+            Updates the internal `_pattern` attribute in place.
+
+        Notes
+        -----
+        - Relies on `check_matching(pat)` to determine whether a pattern
+          matches the current input.
+        - Ensures `_pattern` always resolves to either a valid pattern or
+          `STRING.EMPTY`.
+        """
         if self.defined_patterns:
-            is_matched = False
-            if self.is_plural():
-                for pat in self.defined_patterns[-2:]:
-                    is_matched = self.check_matching(pat)
-                    if is_matched:
-                        self._pattern = pat
-                        break
+            indices = slice(-2, None) if self.is_plural() else slice(None, None)
+            defined_patterns = self.defined_patterns[indices]
+            for pat in defined_patterns:
+                if self.check_matching(pat):
+                    self._pattern = pat
+                    break
             else:
-                for pat in self.defined_patterns:
-                    is_matched = self.check_matching(pat)
-                    if is_matched:
-                        self._pattern = pat
-                        break
-            if not is_matched:
                 self._pattern = STRING.EMPTY
         else:
             is_matched = self.check_matching(self.defined_pattern)
             self._pattern = self.defined_pattern if is_matched else STRING.EMPTY
 
     def check_matching(self, pattern):
-        pat = '%s$' % pattern
+        """
+        Check whether all data entries match the given regex pattern.
 
-        chk = True
-        for data in self.lst_of_all_data:
-            match = re.match(pat, data)
-            chk = chk and bool(match)
+        This method appends a trailing `$` to the provided pattern to ensure
+        matches occur at the end of each string. It then evaluates every entry
+        in `lst_of_all_data` using `re.match`. The result is True only if all
+        entries match the pattern.
 
-        return chk
+        Parameters
+        ----------
+        pattern : str
+            The regex pattern to test against each data entry. A trailing `$`
+            is automatically appended to enforce end-of-string matching.
 
-    def is_digit(self):
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` match the pattern,
+            False otherwise.
+        """
+        pat = f"{pattern}$"
+        is_matched = all(re.match(pat, data) for data in self.lst_of_all_data)
+        return is_matched
+
+    def is_digit(self) -> bool:
+        """
+        Check whether the current name corresponds to a digit pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.DIGIT` to determine if it represents a
+        digit-based pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.DIGIT`, False otherwise.
+        """
         return self.name == TEXT.DIGIT
 
-    def is_digits(self):
+    def is_digits(self) -> bool:
+        """
+        Check whether the current name corresponds to a digits pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.DIGITS` to determine if it represents a
+        multi-digit pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.DIGITS`, False otherwise.
+        """
         return self.name == TEXT.DIGITS
 
-    def is_number(self):
+    def is_number(self) -> bool:
+        """
+        Check whether the current name corresponds to a number pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.NUMBER` to determine if it represents a
+        numeric pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.NUMBER`, False otherwise.
+        """
         return self.name == TEXT.NUMBER
 
-    def is_mixed_number(self):
+    def is_mixed_number(self) -> bool:
+        """
+        Check whether the current name corresponds to a mixed number pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.MIXED_NUMBER` to determine if it represents
+        a mixed numeric pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.MIXED_NUMBER`, False otherwise.
+        """
         return self.name == TEXT.MIXED_NUMBER
 
-    def is_letter(self):
+    def is_letter(self) -> bool:
+        """
+        Check whether the current name corresponds to a letter pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.LETTER` to determine if it represents a
+        single letter pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.LETTER`, False otherwise.
+        """
         return self.name == TEXT.LETTER
 
-    def is_letters(self):
+    def is_letters(self) -> bool:
+        """
+        Check whether the current name corresponds to a letters pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.LETTERS` to determine if it represents a
+        multiple-letters pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.LETTERS`, False otherwise.
+        """
         return self.name == TEXT.LETTERS
 
-    def is_alphabet_numeric(self):
+    def is_alphabet_numeric(self) -> bool:
+        """
+        Check whether the current name corresponds to an alphanumeric pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.ALPHABET_NUMERIC` to determine if it represents
+        a pattern consisting of both alphabetic and numeric characters.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.ALPHABET_NUMERIC`, False otherwise.
+        """
         return self.name == TEXT.ALPHABET_NUMERIC
 
-    def is_symbol(self):
+    def is_symbol(self) -> bool:
+        """
+        Check whether the current name corresponds to a symbol pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.PUNCT` to determine if it represents a
+        punctuation or symbol pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.PUNCT`, False otherwise.
+        """
         return self.name == TEXT.PUNCT
 
-    def is_symbols(self):
+    def is_symbols(self) -> bool:
+        """
+        Check whether the current name corresponds to a symbols pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.PUNCTS` to determine if it represents a
+        multiple-symbols pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.PUNCTS`, False otherwise.
+        """
         return self.name == TEXT.PUNCTS
 
-    def is_symbols_group(self):
+    def is_symbols_group(self) -> bool:
+        """
+        Check whether the current name corresponds to a symbols group pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.PUNCTS_GROUP` to determine if it represents
+        a grouped symbols pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.PUNCTS_GROUP`, False otherwise.
+        """
         return self.name == TEXT.PUNCTS_GROUP
 
-    def is_graph(self):
+    def is_graph(self) -> bool:
+        """
+        Check whether the current name corresponds to a graph pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.GRAPH` to determine if it represents a
+        graph-related pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.GRAPH`, False otherwise.
+        """
         return self.name == TEXT.GRAPH
 
-    def is_word(self):
+    def is_word(self) -> bool:
+        """
+        Check whether the current name corresponds to a word pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.WORD` to determine if it represents a
+        single word pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.WORD`, False otherwise.
+        """
         return self.name == TEXT.WORD
 
-    def is_words(self):
+    def is_words(self) -> bool:
+        """
+        Check whether the current name corresponds to a words pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.WORDS` to determine if it represents a
+        multiple-words pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.WORDS`, False otherwise.
+        """
         return self.name == TEXT.WORDS
 
-    def is_mixed_word(self):
+    def is_mixed_word(self) -> bool:
+        """
+        Check whether the current name corresponds to a mixed word pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.MIXED_WORD` to determine if it represents
+        a mixed word pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.MIXED_WORD`, False otherwise.
+        """
         return self.name == TEXT.MIXED_WORD
 
-    def is_mixed_words(self):
+    def is_mixed_words(self) -> bool:
+        """
+        Check whether the current name corresponds to a mixed words pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.MIXED_WORDS` to determine if it represents
+        a multiple mixed-words pattern.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.MIXED_WORDS`, False otherwise.
+        """
         return self.name == TEXT.MIXED_WORDS
 
-    def is_non_whitespace(self):
+    def is_non_whitespace(self) -> bool:
+        """
+        Check whether the current name corresponds to a non-whitespace pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.NON_WHITESPACE` to determine if it represents
+        a pattern that excludes whitespace characters.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.NON_WHITESPACE`, False otherwise.
+        """
         return self.name == TEXT.NON_WHITESPACE
 
-    def is_non_whitespaces(self):
+    def is_non_whitespaces(self) -> bool:
+        """
+        Check whether the current name corresponds to a non-whitespaces pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.NON_WHITESPACES` to determine if it represents
+        a pattern that excludes multiple whitespace characters.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.NON_WHITESPACES`, False otherwise.
+        """
         return self.name == TEXT.NON_WHITESPACES
 
-    def is_non_whitespaces_group(self):
+    def is_non_whitespaces_group(self) -> bool:
+        """
+        Check whether the current name corresponds to a non-whitespaces group pattern.
+
+        This method compares the instance's `name` attribute against
+        the constant `TEXT.NON_WHITESPACES_GROUP` to determine if it
+        represents a grouped pattern that excludes whitespace characters.
+
+        Returns
+        -------
+        bool
+            True if `name` equals `TEXT.NON_WHITESPACES_GROUP`, False otherwise.
+        """
         return self.name == TEXT.NON_WHITESPACES_GROUP
 
     def is_group(self):
-        chk = self.is_symbols_group()
-        chk |= self.is_words()
-        chk |= self.is_mixed_words()
-        chk |= self.is_non_whitespaces_group()
+        """
+        Check whether the current name corresponds to any defined group pattern.
+
+        This method evaluates multiple boolean helpers to determine if the
+        instance represents a grouped pattern. It returns True if the name
+        matches symbols group, words, mixed words, or non-whitespaces group.
+
+        Returns
+        -------
+        bool
+            True if the instance corresponds to any group pattern, False otherwise.
+        """
+        chk = (
+                self.is_symbols_group()
+                or self.is_words()
+                or self.is_mixed_words()
+                or self.is_non_whitespaces_group()
+        )
         return chk
 
-    def is_group_with_multi_spaces(self):
+    def is_group_with_multi_spaces(self) -> bool:
+        """
+        Check whether the current group contains entries with multiple consecutive spaces.
+
+        This method first verifies that the instance corresponds to a valid group
+        using `is_group()`. If so, it iterates through all data entries in
+        `lst_of_all_data` and checks whether any entry, after stripping leading
+        and trailing whitespace, contains the constant `STRING.DOUBLE_SPACES`.
+
+        Returns
+        -------
+        bool
+            True if the group contains at least one entry with multiple spaces,
+            False otherwise.
+        """
         if not self.is_group():
             return False
 
-        for data in self.lst_of_all_data:
-            if STRING.DOUBLE_SPACES in data.strip():
-                return True
-        return False
+        return any(STRING.DOUBLE_SPACES in data.strip() for data in
+                   self.lst_of_all_data)
 
-    def is_numeric(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= data.isnumeric()
-        return chk
+    def is_numeric(self) -> bool:
+        """
+        Check whether all entries in the data list are numeric.
 
-    def is_alphabet(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= data.isalpha()
-        return chk
+        This method iterates through each entry in `lst_of_all_data`
+        and verifies that every entry consists only of numeric characters
+        using the built-in `str.isnumeric()` method.
 
-    def is_not_alphabet(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= not data.isalpha()
-        return chk
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` are numeric,
+            False otherwise.
+        """
+        return all(data.isnumeric() for data in self.lst_of_all_data)
 
-    def is_punctuation(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= data.isprintable() and not data.isalnum()
-        return chk
+    def is_alphabet(self) -> bool:
+        """
+        Check whether all entries in the data list are alphabetic.
 
-    def is_printable(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= data.isprintable()
-        return chk
+        This method iterates through each entry in `lst_of_all_data`
+        and verifies that every entry consists only of alphabetic
+        characters using the built-in `str.isalpha()` method.
 
-    def is_subset_of(self, other):
-        fmt = 'Need to implement subset verification for (%s, %s)'
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` are alphabetic,
+            False otherwise.
+        """
+        return all(data.isalpha() for data in self.lst_of_all_data)
+
+    def is_not_alphabet(self) -> bool:
+        """
+        Check whether all entries in the data list are non-alphabetic.
+
+        This method iterates through each entry in `lst_of_all_data`
+        and verifies that every entry does not consist solely of
+        alphabetic characters, using the built-in `str.isalpha()` method.
+
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` are non-alphabetic,
+            False otherwise.
+        """
+        return all(not data.isalpha() for data in self.lst_of_all_data)
+
+    def is_punctuation(self) -> bool:
+        """
+        Check whether all entries in the data list are punctuation characters.
+
+        This method iterates through each entry in `lst_of_all_data`
+        and verifies that every entry is printable but not alphanumeric,
+        which classifies it as punctuation.
+
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` are punctuation,
+            False otherwise.
+        """
+        return all(data.isprintable() and not data.isalnum() for data in
+                   self.lst_of_all_data)
+
+    def is_printable(self) -> bool:
+        """
+        Check whether all entries in the data list are printable.
+
+        This method iterates through each entry in `lst_of_all_data`
+        and verifies that every entry consists only of printable
+        characters using the built-in `str.isprintable()` method.
+
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` are printable,
+            False otherwise.
+        """
+        return all(data.isprintable() for data in self.lst_of_all_data)
+
+    def is_subset_of(self, other) -> bool:
+        """
+        Verify whether the current instance is a subset of another.
+
+        This method is a placeholder for subset verification logic.
+        It raises a NotImplementedError to indicate that the functionality
+        has not yet been implemented. The error message includes the
+        class names of both the current instance and the provided `other`
+        object for clarity.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object to compare against for subset verification.
+
+        Raises
+        ------
+        NotImplementedError
+            Always raised to indicate that subset verification
+            is not yet implemented.
+        """
         cls_name = Misc.get_instance_class_name(self)
         other_cls_name = Misc.get_instance_class_name(other)
-        error = fmt % (cls_name, other_cls_name)
+        error = f"Subset verification not implemented for ({cls_name}, {other_cls_name})"
         raise NotImplementedError(error)
 
-    def is_superset_of(self, other):
-        fmt = 'Need to implement superset verification for (%s, %s)'
+    def is_superset_of(self, other) -> bool:
+        """
+        Verify whether the current instance is a superset of another.
+
+        This method is a placeholder for superset verification logic.
+        It raises a NotImplementedError to indicate that the functionality
+        has not yet been implemented. The error message includes the
+        class names of both the current instance and the provided `other`
+        object for clarity.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object to compare against for superset verification.
+
+        Raises
+        ------
+        NotImplementedError
+            Always raised to indicate that superset verification
+            is not yet implemented.
+        """
         cls_name = Misc.get_instance_class_name(self)
         other_cls_name = Misc.get_instance_class_name(other)
-        error = fmt % (cls_name, other_cls_name)
+        error = f"Superset verification not implemented for ({cls_name}, {other_cls_name})"
         raise NotImplementedError(error)
 
     def get_new_subset(self, other):
+        """
+        Create a new instance representing a subset of another object.
+
+        This method constructs a new instance of the same type as `other`,
+        using its `data` attribute and the reference data obtained by
+        calling `other.get_reference_data(self)`.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object from which the subset is derived. Must support
+            `data` and `get_reference_data`.
+
+        Returns
+        -------
+        instance of TranslatedPattern or inherited of TranslatedPattern
+            A new instance of the same type as `other`, initialized with
+            its data and the subset reference data.
+        """
         new_instance = other(other.data, other.get_reference_data(self))
         return new_instance
 
     def get_new_superset(self, other):
+        """
+        Create a new instance representing a superset of another object.
+
+        This method constructs a new instance of the same type as `self`,
+        using its `data` attribute and the reference data obtained by
+        calling `self.get_reference_data(other)`.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object from which the superset relationship is derived.
+            Must support being passed to `get_reference_data`.
+
+        Returns
+        -------
+        instance of TranslatedPattern or inherited of TranslatedPattern
+            A new instance of the same type as `self`, initialized with
+            its data and the superset reference data.
+        """
         new_instance = self(self.data, self.get_reference_data(other))
         return new_instance
 
-    def is_plural(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= len(re.split(PATTERN.WHITESPACES, data.strip())) > NUMBER.ONE
-        return chk
+    def is_plural(self) -> bool:
+        """
+        Check whether all entries in the data list contain multiple words.
 
-    def is_singular(self):
-        chk = True
-        for data in self.lst_of_all_data:
-            chk &= len(re.split(PATTERN.WHITESPACES, data.strip())) <= NUMBER.ONE
-        return chk
+        This method iterates through each entry in `lst_of_all_data`,
+        strips leading and trailing whitespace, splits the entry by
+        the whitespace pattern defined in `PATTERN.WHITESPACES`, and
+        verifies that the resulting list has more than one element.
 
-    def is_mixing_singular_plural(self):
-        chk = not self.is_singular() and not self.is_plural()
-        return chk
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` contain more than
+            one word, False otherwise.
+        """
+        return all(
+            len(re.split(PATTERN.WHITESPACES, data.strip())) > NUMBER.ONE
+            for data in self.lst_of_all_data
+        )
 
-    def get_singular_data(self):
-        singular_data = str.split(self.data, STRING.SPACE_CHAR)[NUMBER.ZERO]
-        return singular_data
+    def is_singular(self) -> bool:
+        """
+        Check whether all entries in the data list contain a single word.
 
-    def get_plural_data(self):
+        This method iterates through each entry in `lst_of_all_data`,
+        strips leading and trailing whitespace, splits the entry by
+        the whitespace pattern defined in `PATTERN.WHITESPACES`, and
+        verifies that the resulting list has at most one element.
+
+        Returns
+        -------
+        bool
+            True if all entries in `lst_of_all_data` contain one word
+            or none, False otherwise.
+        """
+        return all(
+            len(re.split(PATTERN.WHITESPACES, data.strip())) <= NUMBER.ONE
+            for data in self.lst_of_all_data
+        )
+
+    def is_mixing_singular_plural(self) -> bool:
+        """
+        Check whether the data list mixes singular and plural entries.
+
+        This method evaluates the contents of `lst_of_all_data` by
+        leveraging `is_singular()` and `is_plural()`. It returns True
+        if the entries are neither entirely singular nor entirely plural,
+        indicating a mixture of both forms.
+
+        Returns
+        -------
+        bool
+            True if the data list contains a mix of singular and plural
+            entries, False otherwise.
+        """
+        return not self.is_singular() and not self.is_plural()
+
+    def get_singular_data(self) -> str:
+        """
+        Extract the first word from the data string.
+
+        This method splits the `data` attribute by the space character
+        defined in `STRING.SPACE_CHAR` and returns the first element
+        of the resulting list.
+
+        Returns
+        -------
+        str
+            The first word from `data`.
+        """
+        return self.data.split(STRING.SPACE_CHAR)[NUMBER.ZERO]
+
+    def get_plural_data(self) -> str:
+        """
+        Retrieve plural data from the list of entries.
+
+        This method iterates through each entry in `lst_of_all_data`,
+        strips leading and trailing whitespace, and checks for the
+        presence of a space character defined in `STRING.SPACE_CHAR`.
+        If such an entry is found, it is returned. Otherwise, a new
+        plural string is constructed by duplicating `self.data`
+        separated by a space.
+
+        Returns
+        -------
+        str
+            An entry containing a space if found in `lst_of_all_data`,
+            otherwise a constructed plural string from `self.data`.
+        """
         for data in self.lst_of_all_data:
             if STRING.SPACE_CHAR in data.strip():
                 return data
-        else:
-            plural_data = '%s %s' % (self.data, self.data)
-            return plural_data
+        return f"{self.data} {self.data}"
 
     def get_reference_data(self, other):
+        """
+        Retrieve reference data based on the relationship with another object.
+
+        This method determines the appropriate reference data by checking
+        the type and relationship of `other` relative to the current instance.
+
+        Logic
+        -----
+        - If `other` is an instance of `TranslatedPattern`:
+            * If `self` is a subset or superset of `other`, return `other.data`.
+            * If both `self` and `other` are plural, return `self.data`.
+            * Otherwise, return the singular form of `self.data` via
+              `get_singular_data()`.
+        - If `other` is not a `TranslatedPattern`, return `self.data`.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object to compare against. It is an instance of
+            `TranslatedPattern` or another type.
+
+        Returns
+        -------
+        str
+            The selected reference data string based on the relationship
+            between `self` and `other`.
+        """
         if isinstance(other, TranslatedPattern):
             if self.is_subset_of(other) or self.is_superset_of(other):
                 return other.data
-            else:
-                if self.is_plural() and other.is_plural():
-                    return self.data
-                else:
-                    result = self.get_singular_data()
-                    return result
-        else:
-            return self.data
+            if self.is_plural() and other.is_plural():
+                return self.data
+            return self.get_singular_data()
+        return self.data
 
-    def raise_recommend_exception(self, other):
+    def raise_recommend_exception(self, other) -> None:
+        """
+        Raise a runtime exception for unimplemented recommended pattern cases.
+
+        This method constructs a descriptive error message indicating that
+        handling for the given `(self, other)` case is not yet implemented.
+        The message includes the data attributes of both objects and the
+        class name of `self`. It then raises a runtime exception using
+        `raise_runtime_error`.
+
+        Parameters
+        ----------
+        other : instance of TranslatedPattern or inherited of TranslatedPattern
+            The object involved in the unimplemented case. Must provide
+            a `data` attribute for inclusion in the error message.
+
+        Raises
+        ------
+        Exception
+            A dynamically created runtime exception with the name
+            "NotImplementRecommendedRTPattern" and a descriptive message.
+        """
         cls_name = Misc.get_instance_class_name(self)
-        fmt = 'Need to implement this case (%r, %r) for %s'
+        msg = (
+            f"Recommended pattern not implemented for class {cls_name} "
+            f"with data pair ({self.data!r}, {other.data!r})"
+        )
         self.raise_runtime_error(
-            name='NotImplementRecommendedRTPattern',
-            msg=fmt % (self.data, other.data, cls_name),
+            name="NotImplementRecommendedRTPattern",
+            msg=msg,
         )
 
-    def get_readable_snippet(self, var=''):
+    def get_readable_snippet(self, var: str = "") -> str:
+        """
+        Generate a human-readable snippet representation of the pattern.
+
+        This method constructs a formatted string representation of the
+        current pattern. It ensures that the instance has a valid `name`,
+        replaces parentheses in `data` with symbolic placeholders, and
+        then builds a snippet string. If a variable name is provided, it
+        is included in the snippet; otherwise, only the value is shown.
+
+        Parameters
+        ----------
+        var : str, optional
+            An optional variable name to include in the snippet. Defaults
+            to an empty string.
+
+        Returns
+        -------
+        str
+            A formatted snippet string containing the pattern's name,
+            optional variable, and value.
+
+        Raises
+        ------
+        RuntimeError
+            If `name` is not defined, a runtime error is raised with
+            the identifier "TranslatedPatternSnippetRTError".
+        """
         if not self.name:
             self.raise_runtime_error(
-                name='TranslatedPatternSnippetRTError',
-                msg='CANT create snippet without name',
+                name="TranslatedPatternSnippetRTError",
+                msg="Cannot create snippet without a defined name",
             )
 
-        value = self.data
-        value = value.replace(SYMBOL.LEFT_PARENTHESIS, '_SYMBOL_LEFT_PARENTHESIS_')
-        value = value.replace(SYMBOL.RIGHT_PARENTHESIS, '_SYMBOL_RIGHT_PARENTHESIS_')
+        value = self.data.replace(SYMBOL.LEFT_PARENTHESIS, "_SYMBOL_LEFT_PARENTHESIS_")
+        value = value.replace(SYMBOL.RIGHT_PARENTHESIS,"_SYMBOL_RIGHT_PARENTHESIS_")
 
         if var:
-            snippet = '%s(var=%s, value=%s)' % (self.actual_name, var, value)
-        else:
-            snippet = '%s(value=%s)' % (self.actual_name, value)
-        return snippet
+            return f"{self.actual_name}(var={var}, value={value})"
+        return f"{self.actual_name}(value={value})"
 
-    def get_regex_pattern(self, var='', is_lessen=False, is_root=False):
+    def get_regex_pattern(self, var: str = "", is_lessen: bool = False,
+                          is_root: bool = False) -> str:
+        """
+        Generate a regex pattern string for the current instance.
+
+        This method constructs a regex pattern based on the instance's
+        attributes and optional flags. It ensures that the instance has
+        a valid `name` before proceeding. Depending on the flags, the
+        pattern may be derived from `lessen_pattern` or `root_pattern`.
+        If a variable name is provided, the pattern is wrapped in a
+        named capturing group.
+
+        Parameters
+        ----------
+        var : str, optional
+            An optional variable name to wrap the pattern in a named
+            capturing group. Defaults to an empty string.
+        is_lessen : bool, optional
+            If True, use `lessen_pattern` instead of `pattern`.
+            Defaults to False.
+        is_root : bool, optional
+            If True, use `root_pattern` instead of `pattern`.
+            Defaults to False.
+
+        Returns
+        -------
+        str
+            The constructed regex pattern string.
+
+        Raises
+        ------
+        RuntimeError
+            If `name` is not defined, a runtime error is raised with
+            the identifier "TranslatedPatternRegexRTError".
+        """
         if not self.name:
             self.raise_runtime_error(
-                name='TranslatedPatternRegexRTError',
-                msg='CANT create regex pattern without name'
+                name="TranslatedPatternRegexRTError",
+                msg="Cannot create regex pattern without a defined name",
             )
 
-        fmt = '(?P<%s>%s)'
         pattern = self.lessen_pattern if is_lessen else self.pattern
         pattern = self.root_pattern if is_root else pattern
-        pattern = fmt % (var, pattern) if var else pattern
+
+        if var:
+            pattern = f"(?P<{var}>{pattern})"
+
         return pattern
 
-    def get_template_snippet(self, var='', is_lessen=False, is_root=False):
+    def get_template_snippet(self, var: str = "", is_lessen: bool = False,
+                             is_root: bool = False) -> str:
+        """
+        Generate a template snippet string for the current pattern.
+
+        This method constructs a formatted template snippet based on the
+        instance's attributes and optional flags. It ensures that the
+        instance has a valid `name` before proceeding. Depending on the
+        flags, the snippet may use `lessen_name` or `root_name`. If a
+        variable name is provided, it is prefixed with `"var_"` and
+        included in the snippet.
+
+        Parameters
+        ----------
+        var : str, optional
+            An optional variable name to include in the snippet. If provided,
+            it is prefixed with `"var_"`. Defaults to an empty string.
+        is_lessen : bool, optional
+            If True, use `lessen_name` instead of `actual_name`. Defaults to False.
+        is_root : bool, optional
+            If True, use `root_name` instead of `actual_name`. Defaults to False.
+
+        Returns
+        -------
+        str
+            A formatted template snippet string containing the pattern's name
+            and optional variable.
+
+        Raises
+        ------
+        RuntimeError
+            If `name` is not defined, a runtime error is raised with the
+            identifier "TranslatedPatternTemplateSnippetRTError".
+        """
         if not self.name:
             self.raise_runtime_error(
-                name='TranslatedPatternTemplateSnippetRTError',
-                msg='CANT create snippet without name'
+                name="TranslatedPatternTemplateSnippetRTError",
+                msg="Cannot create template snippet without a defined name",
             )
 
-        var_txt = 'var_%s' % var if var else STRING.EMPTY
+        var_txt = f"var_{var}" if var else STRING.EMPTY
         name = self.lessen_name if is_lessen else self.actual_name
         name = self.root_name if is_root else name
-        tmpl_snippet = '%s(%s)' % (name, var_txt)
-        return tmpl_snippet
+
+        return f"{name}({var_txt})"
 
     @classmethod
-    def do_factory_create(cls, data, *other):
+    def do_factory_create(cls, data: str, *other):
+        """
+        Factory method to create a translated pattern instance.
+
+        This method attempts to construct an instance of one of several
+        `TranslatedPattern` subclasses using the provided `data` and
+        optional arguments. It iterates through a predefined list of
+        candidate classes and returns the first successfully created
+        instance. If no suitable class can handle the input, a runtime
+        error is raised.
+
+        Parameters
+        ----------
+        data : str
+            The primary input data used to initialize the pattern.
+        *other : other arguments
+            Additional arguments passed to the candidate class constructors.
+
+        Returns
+        -------
+        None or instance of TranslatedPattern or inherited of TranslatedPattern
+            An instance of the first matching subclass that successfully
+            handles the input data.
+
+        Raises
+        ------
+        RuntimeError
+            If no subclass can handle the given input, a runtime error
+            is raised with the identifier "FactoryTranslatedPatternRTIssue".
+        """
         classes = [
             TranslatedDigitPattern,
             TranslatedDigitsPattern,
@@ -514,23 +1294,66 @@ class TranslatedPattern(RuntimeException):
             node = class_(data, *other)
             if node:
                 return node
-
-        RuntimeException.do_raise_runtime_error(
-            obj='FactoryTranslatedPatternRTIssue',
-            msg='Need to implement this case (%r, %r)' % (data, other)
+        RuntimeException.do_raise_runtime_error(    # noqa
+            obj="FactoryTranslatedPatternRTIssue",
+            msg=f"Factory could not create a pattern for data={data!r}, other={other!r}",
         )
 
     @classmethod
     def recommend_pattern(cls, translated_pat_obj1, translated_pat_obj2):
+        """
+        Recommend a generalized pattern from two translated pattern objects.
+
+        This factory-style method delegates to the `recommend` method of
+        `translated_pat_obj1`, passing `translated_pat_obj2` as the argument.
+        It returns the generalized pattern produced by the recommendation
+        logic defined in the first object.
+
+        Parameters
+        ----------
+        translated_pat_obj1 : Instance of TranslatedPattern or inherited of TranslatedPattern
+            The primary translated pattern object. Must implement a
+            `recommend` method.
+        translated_pat_obj2 : Instance of TranslatedPattern or inherited of TranslatedPattern
+            The secondary translated pattern object to be compared against.
+
+        Returns
+        -------
+        Instance of TranslatedPattern or inherited of TranslatedPattern
+            A generalized translated pattern instance recommended based
+            on the relationship between the two input objects.
+        """
         generalized_pat = translated_pat_obj1.recommend(translated_pat_obj2)
         return generalized_pat
 
     @classmethod
-    def recommend_pattern_using_data(cls, data1, data2):
+    def recommend_pattern_using_data(cls, data1: str, data2: str):
+        """
+        Recommend a generalized pattern from two raw data inputs.
+
+        This factory-style method first creates translated pattern
+        objects from the provided input data using `do_factory_create`.
+        It then delegates to the `recommend` method of the first
+        translated pattern object, passing the second as the argument.
+        The result is a generalized pattern instance based on the
+        relationship between the two inputs.
+
+        Parameters
+        ----------
+        data1 : str
+            The first raw data input used to create a translated pattern.
+        data2 : str
+            The second raw data input used to create a translated pattern.
+
+        Returns
+        -------
+        Instance of TranslatedPattern or inherited of TranslatedPattern
+            A generalized translated pattern instance recommended based
+            on the relationship between the two input data values.
+        """
         translated_pat_obj1 = cls.do_factory_create(data1)
         translated_pat_obj2 = cls.do_factory_create(data2)
-        generalized_pat = translated_pat_obj1.recommend(translated_pat_obj2)
-        return generalized_pat
+        return translated_pat_obj1.recommend(translated_pat_obj2)
 
 
 class TranslatedDigitPattern(TranslatedPattern):
