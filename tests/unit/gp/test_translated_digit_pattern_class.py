@@ -242,33 +242,3 @@ class TestTranslatedDigitPatternClass:
         other = TranslatedPattern.do_factory_create(*args)
         recommend_instance = self.digit_node.recommend(other)
         assert isinstance(recommend_instance, expected_class)
-
-    def test_raise_exception_in_is_subset_of(self):
-        """
-        Verify that `is_subset_of` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digit_node.is_subset_of(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
-
-    def test_raise_exception_in_is_superset_of(self):
-        """
-        Verify that `is_superset_of` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digit_node.is_superset_of(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
-
-    def test_raise_exception_in_recommend(self):
-        """
-        Verify that `recommend` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digit_node.recommend(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"

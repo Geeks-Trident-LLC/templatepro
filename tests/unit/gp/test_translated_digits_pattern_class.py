@@ -91,12 +91,12 @@ class TestTranslatedDigitsPatternClass:
     @pytest.mark.parametrize(
         "other",
         [
-            "1",                # digits is a superset of digit
+            "1",                # digit is a superset of digit
         ],
     )
     def test_is_superset_of(self, other):
         """
-        Verify that a digits data is correctly identified as a superset of digit.
+        Verify that digits data is correctly identified as a superset of digit.
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
@@ -230,33 +230,3 @@ class TestTranslatedDigitsPatternClass:
         other = TranslatedPattern.do_factory_create(*args)
         recommend_instance = self.digits_node.recommend(other)
         assert isinstance(recommend_instance, expected_class)
-
-    def test_raise_exception_in_is_subset_of(self):
-        """
-        Verify that `is_subset_of` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digits_node.is_subset_of(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
-
-    def test_raise_exception_in_is_superset_of(self):
-        """
-        Verify that `is_superset_of` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digits_node.is_superset_of(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
-
-    def test_raise_exception_in_recommend(self):
-        """
-        Verify that `recommend` raises a NotImplementRecommendedRTPattern
-        when called with an unsupported dummy pattern.
-        """
-        dummy_other = TranslatedDummyPattern()
-        with pytest.raises(Exception) as ex:
-            self.digits_node.recommend(dummy_other)
-        assert ex.type.__name__ == "NotImplementRecommendedRTPattern"

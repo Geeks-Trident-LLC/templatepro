@@ -54,7 +54,7 @@ from textfsmgen.exceptions import RuntimeException
 
 class LData(RuntimeException):
     """
-    Line data wrapper for string input with utilities to
+    Line number wrapper for string input with utilities to
     inspect leading and trailing whitespace.
 
     This class normalizes input by storing both the raw string
@@ -65,7 +65,7 @@ class LData(RuntimeException):
     Parameters
     ----------
     data : Any
-        Input data to be wrapped. Converted to string internally.
+        Input number to be wrapped. Converted to string internally.
 
     Attributes
     ----------
@@ -86,7 +86,7 @@ class LData(RuntimeException):
         Returns
         -------
         LData
-            A new line data instance initialized with the provided arguments.
+            A new line number instance initialized with the provided arguments.
         """
         new_instance = self.__class__(*args, **kwargs)
         return new_instance
@@ -94,7 +94,7 @@ class LData(RuntimeException):
     @property
     def leading(self):
         """
-        Extract leading whitespace from the raw data.
+        Extract leading whitespace from the raw number.
 
         Returns
         -------
@@ -107,7 +107,7 @@ class LData(RuntimeException):
     @property
     def trailing(self):
         """
-        Extract trailing whitespace from the raw data.
+        Extract trailing whitespace from the raw number.
 
         Returns
         -------
@@ -120,7 +120,7 @@ class LData(RuntimeException):
     @property
     def is_leading(self):
         """
-        Check if the raw data contains leading whitespace.
+        Check if the raw number contains leading whitespace.
 
         Returns
         -------
@@ -133,7 +133,7 @@ class LData(RuntimeException):
     @property
     def is_trailing(self):
         """
-        Check if the raw data contains trailing whitespace.
+        Check if the raw number contains trailing whitespace.
 
         Returns
         -------
@@ -418,7 +418,7 @@ class TranslatedPattern(RuntimeException):
 
     def check_matching(self, pattern):
         """
-        Check whether all data entries match the given regex pattern.
+        Check whether all number entries match the given regex pattern.
 
         This method appends a trailing `$` to the provided pattern to ensure
         matches occur at the end of each string. It then evaluates every entry
@@ -428,7 +428,7 @@ class TranslatedPattern(RuntimeException):
         Parameters
         ----------
         pattern : str
-            The regex pattern to test against each data entry. A trailing `$`
+            The regex pattern to test against each number entry. A trailing `$`
             is automatically appended to enforce end-of-string matching.
 
         Returns
@@ -737,7 +737,7 @@ class TranslatedPattern(RuntimeException):
         Check whether the current group contains entries with multiple consecutive spaces.
 
         This method first verifies that the instance corresponds to a valid group
-        using `is_group()`. If so, it iterates through all data entries in
+        using `is_group()`. If so, it iterates through all number entries in
         `lst_of_all_data` and checks whether any entry, after stripping leading
         and trailing whitespace, contains the constant `STRING.DOUBLE_SPACES`.
 
@@ -755,7 +755,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_numeric(self) -> bool:
         """
-        Check whether all entries in the data list are numeric.
+        Check whether all entries in the number list are numeric.
 
         This method iterates through each entry in `lst_of_all_data`
         and verifies that every entry consists only of numeric characters
@@ -771,7 +771,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_alphabet(self) -> bool:
         """
-        Check whether all entries in the data list are alphabetic.
+        Check whether all entries in the number list are alphabetic.
 
         This method iterates through each entry in `lst_of_all_data`
         and verifies that every entry consists only of alphabetic
@@ -787,7 +787,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_not_alphabet(self) -> bool:
         """
-        Check whether all entries in the data list are non-alphabetic.
+        Check whether all entries in the number list are non-alphabetic.
 
         This method iterates through each entry in `lst_of_all_data`
         and verifies that every entry does not consist solely of
@@ -803,7 +803,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_punctuation(self) -> bool:
         """
-        Check whether all entries in the data list are punctuation characters.
+        Check whether all entries in the number list are punctuation characters.
 
         This method iterates through each entry in `lst_of_all_data`
         and verifies that every entry is printable but not alphanumeric,
@@ -820,7 +820,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_printable(self) -> bool:
         """
-        Check whether all entries in the data list are printable.
+        Check whether all entries in the number list are printable.
 
         This method iterates through each entry in `lst_of_all_data`
         and verifies that every entry consists only of printable
@@ -891,20 +891,20 @@ class TranslatedPattern(RuntimeException):
         Create a new instance representing a subset of another object.
 
         This method constructs a new instance of the same type as `other`,
-        using its `data` attribute and the reference data obtained by
+        using its `number` attribute and the reference number obtained by
         calling `other.get_reference_data(self)`.
 
         Parameters
         ----------
         other : instance of TranslatedPattern or inherited of TranslatedPattern
             The object from which the subset is derived. Must support
-            `data` and `get_reference_data`.
+            `number` and `get_reference_data`.
 
         Returns
         -------
         instance of TranslatedPattern or inherited of TranslatedPattern
             A new instance of the same type as `other`, initialized with
-            its data and the subset reference data.
+            its number and the subset reference number.
         """
         new_instance = other(other.data, other.get_reference_data(self))
         return new_instance
@@ -914,7 +914,7 @@ class TranslatedPattern(RuntimeException):
         Create a new instance representing a superset of another object.
 
         This method constructs a new instance of the same type as `self`,
-        using its `data` attribute and the reference data obtained by
+        using its `number` attribute and the reference number obtained by
         calling `self.get_reference_data(other)`.
 
         Parameters
@@ -927,14 +927,14 @@ class TranslatedPattern(RuntimeException):
         -------
         instance of TranslatedPattern or inherited of TranslatedPattern
             A new instance of the same type as `self`, initialized with
-            its data and the superset reference data.
+            its number and the superset reference number.
         """
         new_instance = self(self.data, self.get_reference_data(other))
         return new_instance
 
     def is_plural(self) -> bool:
         """
-        Check whether all entries in the data list contain multiple words.
+        Check whether all entries in the number list contain multiple words.
 
         This method iterates through each entry in `lst_of_all_data`,
         strips leading and trailing whitespace, splits the entry by
@@ -954,7 +954,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_singular(self) -> bool:
         """
-        Check whether all entries in the data list contain a single word.
+        Check whether all entries in the number list contain a single word.
 
         This method iterates through each entry in `lst_of_all_data`,
         strips leading and trailing whitespace, splits the entry by
@@ -974,7 +974,7 @@ class TranslatedPattern(RuntimeException):
 
     def is_mixing_singular_plural(self) -> bool:
         """
-        Check whether the data list mixes singular and plural entries.
+        Check whether the number list mixes singular and plural entries.
 
         This method evaluates the contents of `lst_of_all_data` by
         leveraging `is_singular()` and `is_plural()`. It returns True
@@ -984,42 +984,42 @@ class TranslatedPattern(RuntimeException):
         Returns
         -------
         bool
-            True if the data list contains a mix of singular and plural
+            True if the number list contains a mix of singular and plural
             entries, False otherwise.
         """
         return not self.is_singular() and not self.is_plural()
 
     def get_singular_data(self) -> str:
         """
-        Extract the first word from the data string.
+        Extract the first word from the number string.
 
-        This method splits the `data` attribute by the space character
+        This method splits the `number` attribute by the space character
         defined in `STRING.SPACE_CHAR` and returns the first element
         of the resulting list.
 
         Returns
         -------
         str
-            The first word from `data`.
+            The first word from `number`.
         """
         return self.data.split(STRING.SPACE_CHAR)[NUMBER.ZERO]
 
     def get_plural_data(self) -> str:
         """
-        Retrieve plural data from the list of entries.
+        Retrieve plural number from the list of entries.
 
         This method iterates through each entry in `lst_of_all_data`,
         strips leading and trailing whitespace, and checks for the
         presence of a space character defined in `STRING.SPACE_CHAR`.
         If such an entry is found, it is returned. Otherwise, a new
-        plural string is constructed by duplicating `self.data`
+        plural string is constructed by duplicating `self.number`
         separated by a space.
 
         Returns
         -------
         str
             An entry containing a space if found in `lst_of_all_data`,
-            otherwise a constructed plural string from `self.data`.
+            otherwise a constructed plural string from `self.number`.
         """
         for data in self.lst_of_all_data:
             if STRING.SPACE_CHAR in data.strip():
@@ -1028,19 +1028,19 @@ class TranslatedPattern(RuntimeException):
 
     def get_reference_data(self, other):
         """
-        Retrieve reference data based on the relationship with another object.
+        Retrieve reference number based on the relationship with another object.
 
-        This method determines the appropriate reference data by checking
+        This method determines the appropriate reference number by checking
         the type and relationship of `other` relative to the current instance.
 
         Logic
         -----
         - If `other` is an instance of `TranslatedPattern`:
-            * If `self` is a subset or superset of `other`, return `other.data`.
-            * If both `self` and `other` are plural, return `self.data`.
-            * Otherwise, return the singular form of `self.data` via
+            * If `self` is a subset or superset of `other`, return `other.number`.
+            * If both `self` and `other` are plural, return `self.number`.
+            * Otherwise, return the singular form of `self.number` via
               `get_singular_data()`.
-        - If `other` is not a `TranslatedPattern`, return `self.data`.
+        - If `other` is not a `TranslatedPattern`, return `self.number`.
 
         Parameters
         ----------
@@ -1051,7 +1051,7 @@ class TranslatedPattern(RuntimeException):
         Returns
         -------
         str
-            The selected reference data string based on the relationship
+            The selected reference number string based on the relationship
             between `self` and `other`.
         """
         if isinstance(other, TranslatedPattern):
@@ -1068,7 +1068,7 @@ class TranslatedPattern(RuntimeException):
 
         This method constructs a descriptive error message indicating that
         handling for the given `(self, other)` case is not yet implemented.
-        The message includes the data attributes of both objects and the
+        The message includes the number attributes of both objects and the
         class name of `self`. It then raises a runtime exception using
         `raise_runtime_error`.
 
@@ -1076,7 +1076,7 @@ class TranslatedPattern(RuntimeException):
         ----------
         other : instance of TranslatedPattern or inherited of TranslatedPattern
             The object involved in the unimplemented case. Must provide
-            a `data` attribute for inclusion in the error message.
+            a `number` attribute for inclusion in the error message.
 
         Raises
         ------
@@ -1093,7 +1093,7 @@ class TranslatedPattern(RuntimeException):
 
         msg = (
             f"Recommended pattern not implemented for class {cls_name} "
-            f"with data pair ({self.data!r}, {other_repr})"
+            f"with number pair ({self.data!r}, {other_repr})"
         )
 
         self.raise_runtime_error(
@@ -1107,7 +1107,7 @@ class TranslatedPattern(RuntimeException):
 
         This method constructs a formatted string representation of the
         current pattern. It ensures that the instance has a valid `name`,
-        replaces parentheses in `data` with symbolic placeholders, and
+        replaces parentheses in `number` with symbolic placeholders, and
         then builds a snippet string. If a variable name is provided, it
         is included in the snippet; otherwise, only the value is shown.
 
@@ -1243,7 +1243,7 @@ class TranslatedPattern(RuntimeException):
         Factory method to create a translated pattern instance.
 
         This method attempts to construct an instance of one of several
-        `TranslatedPattern` subclasses using the provided `data` and
+        `TranslatedPattern` subclasses using the provided `number` and
         optional arguments. It iterates through a predefined list of
         candidate classes and returns the first successfully created
         instance. If no suitable class can handle the input, a runtime
@@ -1252,7 +1252,7 @@ class TranslatedPattern(RuntimeException):
         Parameters
         ----------
         data : str
-            The primary input data used to initialize the pattern.
+            The primary input number used to initialize the pattern.
         *other : other arguments
             Additional arguments passed to the candidate class constructors.
 
@@ -1260,7 +1260,7 @@ class TranslatedPattern(RuntimeException):
         -------
         None or instance of TranslatedPattern or inherited of TranslatedPattern
             An instance of the first matching subclass that successfully
-            handles the input data.
+            handles the input number.
 
         Raises
         ------
@@ -1303,7 +1303,7 @@ class TranslatedPattern(RuntimeException):
                 return node
         RuntimeException.do_raise_runtime_error(    # noqa
             obj="FactoryTranslatedPatternRTIssue",
-            msg=f"Factory could not create a pattern for data={data!r}, other={other!r}",
+            msg=f"Factory could not create a pattern for number={data!r}, other={other!r}",
         )
 
     @classmethod
@@ -1336,10 +1336,10 @@ class TranslatedPattern(RuntimeException):
     @classmethod
     def recommend_pattern_using_data(cls, data1: str, data2: str):
         """
-        Recommend a generalized pattern from two raw data inputs.
+        Recommend a generalized pattern from two raw number inputs.
 
         This factory-style method first creates translated pattern
-        objects from the provided input data using `do_factory_create`.
+        objects from the provided input number using `do_factory_create`.
         It then delegates to the `recommend` method of the first
         translated pattern object, passing the second as the argument.
         The result is a generalized pattern instance based on the
@@ -1348,15 +1348,15 @@ class TranslatedPattern(RuntimeException):
         Parameters
         ----------
         data1 : str
-            The first raw data input used to create a translated pattern.
+            The first raw number input used to create a translated pattern.
         data2 : str
-            The second raw data input used to create a translated pattern.
+            The second raw number input used to create a translated pattern.
 
         Returns
         -------
         Instance of TranslatedPattern or inherited of TranslatedPattern
             A generalized translated pattern instance recommended based
-            on the relationship between the two input data values.
+            on the relationship between the two input number values.
         """
         translated_pat_obj1 = cls.do_factory_create(data1)
         translated_pat_obj2 = cls.do_factory_create(data2)
@@ -1375,7 +1375,7 @@ class TranslatedDigitPattern(TranslatedPattern):
     Parameters
     ----------
     data : str
-        The primary input data representing a digit.
+        The primary input number representing a digit.
     *other : list of arguments, optional
         Additional arguments passed to the base class initializer.
 
@@ -1528,7 +1528,7 @@ class TranslatedDigitsPattern(TranslatedPattern):
     Parameters
     ----------
     data : str
-        The primary input data representing digit(s).
+        The primary input number representing digit(s).
     *other : list of arguments, optional
         Additional arguments passed to the base class initializer.
 
@@ -1672,45 +1672,148 @@ class TranslatedDigitsPattern(TranslatedPattern):
 
 
 class TranslatedNumberPattern(TranslatedPattern):
+    """
+    Specialized translated pattern for numeric inputs.
+
+    This subclass of `TranslatedPattern` defines behavior specific to
+    numbers. It provides subset and superset checks against other
+    translated patterns and supports recommendation logic for
+    generalization when combined with different pattern types.
+
+    Parameters
+    ----------
+    data : str
+        The input string representing a number.
+    *other : tuple, optional
+        Additional arguments passed to the base class initializer.
+
+    Attributes
+    ----------
+    name : str
+        Identifier for this pattern type ("number").
+    defined_pattern : str
+        Regex pattern used to match numeric values.
+    root_name : str
+        Root category name for this pattern ("non_whitespaces").
+    """
     def __init__(self, data, *other):
-        super().__init__(data, *other, name=TEXT.NUMBER,
-                         defined_pattern=PATTERN.NUMBER,
-                         root_name='non_whitespaces')
+        super().__init__(
+            data,
+            *other,
+            name=TEXT.NUMBER,
+            defined_pattern=PATTERN.NUMBER,
+            root_name='non_whitespaces'
+        )
 
-    def is_subset_of(self, other):
-        chk = other.is_number() or other.is_mixed_number()
-        chk |= other.is_mixed_word() or other.is_mixed_words()
-        chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
+    def is_subset_of(self, other) -> bool:
+        """
+        Determine whether this number pattern is a subset of another translated pattern.
 
-        return chk
+        A number is considered a subset of broader categories such as
+        numbers, mixed numbers, mixed words, non-whitespace sequences,
+        and non-whitespace groups.
 
-    def is_superset_of(self, other):
-        chk = other.is_digit() or other.is_digits()
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern instance to compare against.
 
-        return chk
+        Returns
+        -------
+        bool
+            True if this number pattern is a subset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
+        return any([
+            other.is_number(),
+            other.is_mixed_number(),
+            other.is_mixed_word(),
+            other.is_mixed_words(),
+            other.is_non_whitespaces(),
+            other.is_non_whitespaces_group(),
+        ])
+
+    def is_superset_of(self, other) -> bool:
+        """
+        Determine whether this number pattern is a superset of another translated pattern.
+
+        A number is considered a superset when the other pattern
+        represents a digit or a sequence of digits.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern instance to compare against.
+
+        Returns
+        -------
+        bool
+            True if this number pattern is a superset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
+        return other.is_digit() or other.is_digits()
 
     def recommend(self, other):
+        """
+        Recommend a generalized translated pattern when combined with another pattern.
 
-        if self.is_subset_of(other) or self.is_superset_of(other):
-            if self.is_subset_of(other):
-                return self.get_new_subset(other)
-            else:
-                return self.get_new_superset(other)
-        else:
-            case1 = other.is_letter() or other.is_letters()
-            case1 |= other.is_alphabet_numeric() or other.is_graph() or other.is_word()
+        If this number pattern is a subset or superset of `other`,
+        a new subset or superset pattern is returned. Otherwise,
+        specific combinations with letters, words, symbols, graphs,
+        or non-whitespace categories produce broader generalized
+        patterns.
 
-            case2 = other.is_words() or other.is_symbols_group()
-            case3 = other.is_symbol() or other.is_symbols() or other.is_non_whitespace()
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern to combine with this number pattern.
 
-            if case1:
-                return TranslatedMixedWordPattern(self.data, other.data)
-            elif case2:
-                return TranslatedMixedWordsPattern(self.data, other.data)
-            elif case3:
-                return TranslatedNonWhitespacesPattern(self.data, other.data)
-            else:
-                return self.raise_recommend_exception(other)
+        Returns
+        -------
+        TranslatedPattern or inherited of TranslatedPattern
+            A generalized translated pattern instance based on the
+            relationship between this number and `other`.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
+        if self.is_subset_of(other):
+            return self.get_new_subset(other)
+        if self.is_superset_of(other):
+            return self.get_new_superset(other)
+
+        if any([other.is_letter(), other.is_letters(),
+                other.is_alphabet_numeric(), other.is_graph(), other.is_word()]):
+            return TranslatedMixedWordPattern(self.data, other.data)
+
+        if other.is_words():
+            return TranslatedMixedWordsPattern(self.data, other.data)
+
+        if any([other.is_symbol(), other.is_symbols(), other.is_non_whitespace()]):
+            return TranslatedNonWhitespacesPattern(self.data, other.data)
+
+        if other.is_symbols_group():
+            return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
+
+        return self.raise_recommend_exception(other)
 
 
 class TranslatedMixedNumberPattern(TranslatedPattern):
@@ -1720,12 +1823,16 @@ class TranslatedMixedNumberPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_mixed_number() or other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_digit() or other.is_digits() or other.is_number()
 
         return chk
@@ -1765,6 +1872,8 @@ class TranslatedLetterPattern(TranslatedPattern):
                          root_name='non_whitespace')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters()
         chk |= other.is_alphabet_numeric() or other.is_graph()
         chk |= other.is_word() or other.is_words()
@@ -1775,6 +1884,8 @@ class TranslatedLetterPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         return False
 
     def recommend(self, other):
@@ -1814,6 +1925,8 @@ class TranslatedLettersPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letters() or other.is_word() or other.is_words()
         chk |= other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
@@ -1821,6 +1934,8 @@ class TranslatedLettersPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter()
 
         return chk
@@ -1859,6 +1974,8 @@ class TranslatedAlphabetNumericPattern(TranslatedPattern):
                          root_name='non_whitespace')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_alphabet_numeric() or other.is_word() or other.is_words()
         chk |= other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespace() or other.is_non_whitespaces()
@@ -1867,6 +1984,8 @@ class TranslatedAlphabetNumericPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters() or other.is_digit()
 
         return chk
@@ -1906,6 +2025,8 @@ class TranslatedPunctPattern(TranslatedPattern):
                          root_name='non_whitespace')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_symbol() or other.is_graph()
         chk |= other.is_symbols() or other.is_symbols_group()
         chk |= other.is_mixed_word() or other.is_mixed_words()
@@ -1915,6 +2036,8 @@ class TranslatedPunctPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         return False
 
     def recommend(self, other):
@@ -1949,6 +2072,8 @@ class TranslatedPunctsPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_symbols() or other.is_symbols_group()
         chk |= other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
@@ -1956,6 +2081,8 @@ class TranslatedPunctsPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_symbol()
 
         return chk
@@ -2002,12 +2129,16 @@ class TranslatedPunctsGroupPattern(TranslatedPattern):
                          root_name='non_whitespaces_or_group')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_symbols_group() or other.is_mixed_word()
         chk |= other.is_mixed_words() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_symbol() or other.is_symbols()
 
         return chk
@@ -2041,6 +2172,8 @@ class TranslatedGraphPattern(TranslatedPattern):
                          root_name='non_whitespace')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespace() or other.is_non_whitespaces()
         chk |= other.is_non_whitespaces_group()
@@ -2048,6 +2181,8 @@ class TranslatedGraphPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_digit()
         chk |= other.is_alphabet_numeric() or other.is_symbol()
 
@@ -2081,6 +2216,8 @@ class TranslatedWordPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_word() or other.is_words()
         chk |= other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
@@ -2088,6 +2225,8 @@ class TranslatedWordPattern(TranslatedPattern):
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters()
         chk |= other.is_alphabet_numeric() and other.is_alphabet()
 
@@ -2132,11 +2271,15 @@ class TranslatedWordsPattern(TranslatedPattern):
                          root_name='non_whitespaces_or_group')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_words() or other.is_mixed_words() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters() or other.is_word()
         chk |= other.is_alphabet_numeric() and other.is_alphabet()
 
@@ -2169,12 +2312,16 @@ class TranslatedMixedWordPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_mixed_word() or other.is_mixed_words()
         chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters()
         chk |= other.is_digit() or other.is_digits()
         chk |= other.is_alphabet_numeric() or other.is_word()
@@ -2221,11 +2368,15 @@ class TranslatedMixedWordsPattern(TranslatedPattern):
                          root_name='non_whitespaces_or_group')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_mixed_words() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_letters()
         chk |= other.is_digit() or other.is_digits()
         chk |= other.is_alphabet_numeric()
@@ -2257,12 +2408,16 @@ class TranslatedNonWhitespacePattern(TranslatedPattern):
                          root_name='non_whitespace')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_non_whitespace() or other.is_non_whitespaces()
         chk |= other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_letter() or other.is_digit()
         chk |= other.is_alphabet_numeric()
         chk |= other.is_symbol() or other.is_graph()
@@ -2298,11 +2453,15 @@ class TranslatedNonWhitespacesPattern(TranslatedPattern):
                          root_name='non_whitespaces')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_non_whitespaces() or other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_digit() or other.is_digits()
         chk |= other.is_number() or other.is_mixed_number()
         chk |= other.is_letter() or other.is_letters()
@@ -2347,11 +2506,15 @@ class TranslatedNonWhitespacesGroupPattern(TranslatedPattern):
                          root_name='non_whitespaces_or_group')
 
     def is_subset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_non_whitespaces_group()
 
         return chk
 
     def is_superset_of(self, other):
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
         chk = other.is_digit() or other.is_digits()
         chk |= other.is_number() or other.is_mixed_number()
         chk |= other.is_letter() or other.is_letters()
