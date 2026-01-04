@@ -8,3 +8,9 @@ Run pytest in the project root to execute these tests:
     or
     $ python -m pytest tests/unit/gp
 """
+
+
+class TranslatedDummyPattern:
+    """
+    A lightweight dummy implementation of `TranslatedPattern` used for unit testing.
+    """

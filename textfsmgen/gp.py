@@ -1085,10 +1085,17 @@ class TranslatedPattern(RuntimeException):
             "NotImplementRecommendedRTPattern" and a descriptive message.
         """
         cls_name = Misc.get_instance_class_name(self)
+
+        if isinstance(other, TranslatedPattern):
+            other_repr = repr(other.data)
+        else:
+            other_repr = f"<Unknown:instance of {type(other).__name__}>"
+
         msg = (
             f"Recommended pattern not implemented for class {cls_name} "
-            f"with data pair ({self.data!r}, {other.data!r})"
+            f"with data pair ({self.data!r}, {other_repr})"
         )
+
         self.raise_runtime_error(
             name="NotImplementRecommendedRTPattern",
             msg=msg,
@@ -1357,51 +1364,154 @@ class TranslatedPattern(RuntimeException):
 
 
 class TranslatedDigitPattern(TranslatedPattern):
+    """
+    A translated pattern class specialized for single-digit inputs.
 
+    This class extends `TranslatedPattern` to handle digit-specific
+    cases. It defines subset and superset relationships with other
+    translated patterns and provides recommendation logic for
+    generating generalized patterns when combined with other types.
+
+    Parameters
+    ----------
+    data : str
+        The primary input data representing a digit.
+    *other : list of arguments, optional
+        Additional arguments passed to the base class initializer.
+
+    Attributes
+    ----------
+    name : str
+        The identifier for this pattern type (digit).
+    defined_pattern : str
+        The regex pattern used to match digits.
+    root_name : str
+        The root category name for this pattern ("non_whitespace").
+    """
     def __init__(self, data, *other):
-        super().__init__(data, *other, name=TEXT.DIGIT,
-                         defined_pattern=PATTERN.DIGIT,
-                         root_name='non_whitespace')
+        super().__init__(
+            data,
+            *other,
+            name=TEXT.DIGIT,
+            defined_pattern=PATTERN.DIGIT,
+            root_name="non_whitespace",
+        )
 
     def is_subset_of(self, other):
-        chk = other.is_digit() or other.is_digits()
-        chk |= other.is_number() or other.is_mixed_number()
-        chk |= other.is_alphabet_numeric() or other.is_graph()
-        chk |= other.is_word() or other.is_mixed_word()
-        chk |= other.is_words() or other.is_mixed_words()
-        chk |= other.is_non_whitespace() or other.is_non_whitespaces()
-        chk |= other.is_non_whitespaces_group()
+        """
+        Check if this digit pattern is a subset of another pattern.
+
+        A digit is considered a subset of broader categories such as
+        digits, numbers, mixed numbers, alphanumeric, graphs, words,
+        mixed words, non-whitespace, and related groupings.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern to compare against.
+
+        Returns
+        -------
+        bool
+            True if this digit pattern is a subset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
+        chk = (
+            other.is_digit()
+            or other.is_digits()
+            or other.is_number()
+            or other.is_mixed_number()
+            or other.is_alphabet_numeric()
+            or other.is_graph()
+            or other.is_word()
+            or other.is_mixed_word()
+            or other.is_words()
+            or other.is_mixed_words()
+            or other.is_non_whitespace()
+            or other.is_non_whitespaces()
+            or other.is_non_whitespaces_group()
+        )
         return chk
 
     def is_superset_of(self, other):
+        """
+        Check if this digit pattern is a superset of another pattern.
+
+        Digits are not considered supersets of any other pattern.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern to compare against.
+
+        Returns
+        -------
+        bool
+            Always False.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
         return False
 
     def recommend(self, other):
+        """
+        Recommend a generalized pattern when combined with another pattern.
 
+        This method determines how a digit pattern should be generalized
+        when paired with another translated pattern. If the digit is a
+        subset or superset of `other`, a new subset or superset pattern
+        is returned. Otherwise, specific combinations with letters,
+        symbols, or groups produce broader generalized patterns.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern to combine with this digit pattern.
+
+        Returns
+        -------
+        TranslatedPattern or inherited of TranslatedPattern
+            A generalized translated pattern instance based on the
+            relationship between this digit and `other`.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
         if self.is_subset_of(other) or self.is_superset_of(other):
-            if self.is_subset_of(other):
-                return self.get_new_subset(other)
-            else:
-                return self.get_new_superset(other)
-        else:
-            case1 = other.is_letter()
-            case2 = other.is_letters()
-            case3 = other.is_symbol()
-            case4 = other.is_symbols()
-            case5 = other.is_symbols_group()
+            return (
+                self.get_new_subset(other)
+                if self.is_subset_of(other)
+                else self.get_new_superset(other)
+            )
 
-            if case1:
-                return TranslatedAlphabetNumericPattern(self.data, other.data)
-            elif case2:
-                return TranslatedWordPattern(self.data, other.data)
-            elif case3:
-                return TranslatedNonWhitespacePattern(self.data, other.data)
-            elif case4:
-                return TranslatedNonWhitespacesPattern(self.data, other.data)
-            elif case5:
-                return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
-            else:
-                self.raise_recommend_exception(other)
+        if other.is_letter():
+            return TranslatedAlphabetNumericPattern(self.data, other.data)
+        if other.is_letters():
+            return TranslatedWordPattern(self.data, other.data)
+        if other.is_symbol():
+            return TranslatedNonWhitespacePattern(self.data, other.data)
+        if other.is_symbols():
+            return TranslatedNonWhitespacesPattern(self.data, other.data)
+        if other.is_symbols_group():
+            return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
+
+        return self.raise_recommend_exception(other)
 
 
 class TranslatedDigitsPattern(TranslatedPattern):
@@ -1445,7 +1555,7 @@ class TranslatedDigitsPattern(TranslatedPattern):
             elif case4:
                 return TranslatedNonWhitespacesPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedNumberPattern(TranslatedPattern):
@@ -1487,7 +1597,7 @@ class TranslatedNumberPattern(TranslatedPattern):
             elif case3:
                 return TranslatedNonWhitespacesPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedMixedNumberPattern(TranslatedPattern):
@@ -1532,7 +1642,7 @@ class TranslatedMixedNumberPattern(TranslatedPattern):
             elif case4:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedLetterPattern(TranslatedPattern):
@@ -1581,7 +1691,7 @@ class TranslatedLetterPattern(TranslatedPattern):
             elif case6:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedLettersPattern(TranslatedPattern):
@@ -1626,7 +1736,7 @@ class TranslatedLettersPattern(TranslatedPattern):
             elif case4:
                 return TranslatedNonWhitespacesPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedAlphabetNumericPattern(TranslatedPattern):
@@ -1673,7 +1783,7 @@ class TranslatedAlphabetNumericPattern(TranslatedPattern):
             elif case5:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedPunctPattern(TranslatedPattern):
@@ -1716,7 +1826,7 @@ class TranslatedPunctPattern(TranslatedPattern):
             elif case3:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedPunctsPattern(TranslatedPattern):
@@ -1758,7 +1868,7 @@ class TranslatedPunctsPattern(TranslatedPattern):
             elif case2:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedPunctsGroupPattern(TranslatedPattern):
@@ -1808,7 +1918,7 @@ class TranslatedPunctsGroupPattern(TranslatedPattern):
             if case1 or case2:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedGraphPattern(TranslatedPattern):
@@ -1848,7 +1958,7 @@ class TranslatedGraphPattern(TranslatedPattern):
             elif case2:
                 return TranslatedMixedWordsPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedWordPattern(TranslatedPattern):
@@ -1889,7 +1999,7 @@ class TranslatedWordPattern(TranslatedPattern):
             elif case2:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedWordsPattern(TranslatedPattern):
@@ -1936,7 +2046,7 @@ class TranslatedWordsPattern(TranslatedPattern):
             if case1:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedMixedWordPattern(TranslatedPattern):
@@ -1977,7 +2087,7 @@ class TranslatedMixedWordPattern(TranslatedPattern):
             elif case3:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedMixedWordsPattern(TranslatedPattern):
@@ -2024,7 +2134,7 @@ class TranslatedMixedWordsPattern(TranslatedPattern):
             if case1:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedNonWhitespacePattern(TranslatedPattern):
@@ -2065,7 +2175,7 @@ class TranslatedNonWhitespacePattern(TranslatedPattern):
             elif case2:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedNonWhitespacesPattern(TranslatedPattern):
@@ -2103,7 +2213,7 @@ class TranslatedNonWhitespacesPattern(TranslatedPattern):
             if case1:
                 return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
             else:
-                self.raise_recommend_exception(other)
+                return self.raise_recommend_exception(other)
 
 
 class TranslatedNonWhitespacesGroupPattern(TranslatedPattern):
@@ -2147,4 +2257,4 @@ class TranslatedNonWhitespacesGroupPattern(TranslatedPattern):
             else:
                 return self.get_new_superset(other)
         else:
-            self.raise_recommend_exception(other)
+            return self.raise_recommend_exception(other)

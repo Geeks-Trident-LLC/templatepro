@@ -4,9 +4,9 @@ Unit tests for the `textfsmgen.gp.TranslatedPattern` class.
 Usage
 -----
 Run pytest in the project root to execute these tests:
-    $ pytest tests/unit/gp/test_TranslatedPattern_class.py
+    $ pytest tests/unit/gp/test_translated_pattern_class.py
     or
-    $ python -m pytest tests/unit/gp/test_TranslatedPattern_class.py
+    $ python -m pytest tests/unit/gp/test_translated_pattern_class.py
 """
 
 import pytest
