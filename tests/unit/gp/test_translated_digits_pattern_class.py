@@ -1,25 +1,25 @@
 """
-Unit tests for the `textfsmgen.gp.TranslatedDigitPattern` class.
+Unit tests for the `textfsmgen.gp.TranslatedDigitsPattern` class.
 
 Usage
 -----
 Run pytest in the project root to execute these tests:
-    $ pytest tests/unit/gp/test_translated_digit_pattern_class.py
+    $ pytest tests/unit/gp/test_translated_digits_pattern_class.py
     or
-    $ python -m pytest tests/unit/gp/test_translated_digit_pattern_class.py
+    $ python -m pytest tests/unit/gp/test_translated_digits_pattern_class.py
 """
 
 import pytest
 
 from textfsmgen.gp import (
 TranslatedPattern,
-TranslatedDigitPattern,
+# TranslatedDigitPattern,
 TranslatedDigitsPattern,
 TranslatedNumberPattern,
 TranslatedMixedNumberPattern,
 # TranslatedLetterPattern,
 # TranslatedLettersPattern,
-TranslatedAlphabetNumericPattern,
+# TranslatedAlphabetNumericPattern,
 # TranslatedPunctPattern,
 # TranslatedPunctsPattern,
 # TranslatedPunctsGroupPattern,
@@ -28,7 +28,7 @@ TranslatedWordPattern,
 TranslatedWordsPattern,
 TranslatedMixedWordPattern,
 TranslatedMixedWordsPattern,
-TranslatedNonWhitespacePattern,
+# TranslatedNonWhitespacePattern,
 TranslatedNonWhitespacesPattern,
 TranslatedNonWhitespacesGroupPattern
 )
@@ -38,84 +38,73 @@ from tests.unit.gp import TranslatedDummyPattern
 to_list = lambda arg: arg if isinstance(arg, (list, tuple)) else [arg]
 
 
-class TestTranslatedDigitPatternClass:
-    """Test suite for TranslatedDigitPattern class."""
+class TestTranslatedDigitsPatternClass:
+    """Test suite for TranslatedDigitsPattern class."""
 
     def setup_method(self):
-        """Create a baseline TranslatedDigitPattern instance for reuse."""
-        self.digit_node = TranslatedDigitPattern("1", "2", "3")
+        """Create a baseline TranslatedDigitsPattern instance for reuse."""
+        self.digits_node = TranslatedDigitsPattern("12")
 
     @pytest.mark.parametrize(
         "other",
         [
-            "1",                # digit is a subset of digit
-            "123",              # digit is a subset of digits
-            "1.1",              # digit is a subset of number
-            "-1.1",             # digit is a subset of mixed number
-            ["a", "1"],         # digit is a subset of alphabet numeric
-            ["a", "1", "#"],    # digit is a subset of graph
-            "abc123",           # digit is a subset of word
-            "a1 b12",           # digit is a subset of words
-            "abc.123",          # digit is a subset of mixed word
-            "a.1 b.2",          # digit is a subset of mixed words
-            "\xc8",             # digit is a subset of non-whitespace
-            "abc\xc8",          # digit is a subset of non-whitespaces
-            "abc\xc8 xyz",      # digit is a subset of non-whitespace group
+            "123",              # digits are a subset of digits
+            "1.1",              # digits are a subset of number
+            "-1.1",             # digits are a subset of mixed number
+            "abc123",           # digits are a subset of word
+            "a1 b12",           # digits are a subset of words
+            "abc.123",          # digits are a subset of mixed word
+            "a.1 b.2",          # digits are a subset of mixed words
+            "abc\xc8",          # digits are a subset of non-whitespaces
+            "abc\xc8 xyz",      # digits are a subset of non-whitespace group
         ],
     )
     def test_is_subset_of(self, other):
         """
-        Verify that a digit data is correctly identified as a subset of
-        broader translated categories, including digits, numbers, graphs,
-        words, and non‑whitespace.
+        Verify that digits are a subset of (digits, number, mixed number,
+        word(s), mixed word(s), non‑whitespaces, non-whitespace-group).
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
-        assert self.digit_node.is_subset_of(other_instance) is True
+        assert self.digits_node.is_subset_of(other_instance) is True
 
     @pytest.mark.parametrize(
         "other",
         [
-            "abc",              # digit is not a subset of letter(s)
-            "++--",             # digit is not a subset of punctuation(s)
-            "++ -- ==",         # digit is not a subset of punctuation group
+            "1",                # digits are not a subset of digit
+            "abc",              # digits are not a subset of letter(s)
+            "-",                # digits are not a subset of punctuation
+            "++--",             # digits are not a subset of punctuation(s)
+            "++ -- ==",         # digits are not a subset of punctuation group
+            "\xc8",             # digits are not a subset of non-whitespace
         ],
     )
     def test_is_not_subset_of(self, other):
         """
-        Verify that a digit data is not a subset of letters or punctuations
+        Verify that digits data is not a subset of (digit, letters,
+        punctuation(s), punctuation-group)
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
-        assert self.digit_node.is_subset_of(other_instance) is False
+        assert self.digits_node.is_subset_of(other_instance) is False
 
     @pytest.mark.parametrize(
         "other",
         [
-            "1",                # digit is not a superset of digit
-            "123",              # digit is not a superset of digits
-            "1.1",              # digit is not a superset of number
-            "abc\xc8 xyz",      # digit is not a superset of non-whitespace group
+            "1",                # digits is a superset of digit
         ],
     )
     def test_is_superset_of(self, other):
         """
-        Verify that a digit data is correctly identified as not belonging
-        to any broader translated category.
+        Verify that a digits data is correctly identified as a superset of digit.
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
-        assert self.digit_node.is_superset_of(other_instance) is False
+        assert self.digits_node.is_superset_of(other_instance) is True
 
     @pytest.mark.parametrize(
         "data, expected_class",
         [
-            (
-                "1",    # digit
-                # When a digit is combined with a digit,
-                # the recommendation should produce a digit pattern.
-                TranslatedDigitPattern
-            ),
             (
                 "123",  # digits
                 # When a digit is combined with digits,
@@ -159,12 +148,6 @@ class TestTranslatedDigitPatternClass:
                 TranslatedMixedWordsPattern
             ),
             (
-                "\xc8",  # a non-whitespace
-                # When a digit is combined with a non-whitespace,
-                # the recommendation should produce non-whitespace pattern.
-                TranslatedNonWhitespacePattern
-            ),
-            (
                 "abc\xc8",  # non-whitespaces
                 # When a digit is combined with non-whitespaces,
                 # the recommendation should produce non-whitespaces pattern.
@@ -185,18 +168,33 @@ class TestTranslatedDigitPatternClass:
         """
         args = to_list(data)
         other = TranslatedPattern.do_factory_create(*args)
-        recommend_instance = self.digit_node.recommend(other)
+        recommend_instance = self.digits_node.recommend(other)
         assert isinstance(recommend_instance, expected_class)
 
     @pytest.mark.parametrize(
         "data, expected_class",
         [
             (
-                "a",    # a letter
-                # When a digit is combined with a letter,
-                # the recommendation should produce an alphabet numeric pattern.
-                TranslatedAlphabetNumericPattern
+                "1",    # digit
+                # When digits are combined with a digit,
+                # the recommendation should produce digits pattern.
+                TranslatedDigitsPattern
             ),
+        ],
+    )
+    def test_recommend_method_case_superset(self, data, expected_class):
+        """
+        Verify that a digit type correctly recommends a subset type
+        when combined with compatible data.
+        """
+        args = to_list(data)
+        other = TranslatedPattern.do_factory_create(*args)
+        recommend_instance = self.digits_node.recommend(other)
+        assert isinstance(recommend_instance, expected_class)
+
+    @pytest.mark.parametrize(
+        "data, expected_class",
+        [
             (
                 "ab",  # letters
                 # When a digit is combined with letters,
@@ -207,7 +205,7 @@ class TestTranslatedDigitPatternClass:
                 "+",  # a punctuation
                 # When a digit is combined with a punctuation,
                 # the recommendation should produce a punctuation pattern.
-                TranslatedNonWhitespacePattern
+                TranslatedNonWhitespacesPattern
             ),
             (
                 "++",  # punctuations
@@ -227,20 +225,10 @@ class TestTranslatedDigitPatternClass:
         """
         Verify that a digit type correctly recommends a subset type
         when combined with compatible data.
-
-            ["a", "1"],         # digit is a subset of alphabet numeric
-            ["a", "1", "#"],    # digit is a subset of graph
-            "abc123",           # digit is a subset of word
-            "a1 b12",           # digit is a subset of words
-            "abc.123",          # digit is a subset of mixed word
-            "a.1 b.2",          # digit is a subset of mixed words
-            "\xc8",             # digit is a subset of non-whitespace
-            "abc\xc8",          # digit is a subset of non-whitespaces
-            "abc\xc8 xyz",      # digit is a subset of non-whitespaces
         """
         args = to_list(data)
         other = TranslatedPattern.do_factory_create(*args)
-        recommend_instance = self.digit_node.recommend(other)
+        recommend_instance = self.digits_node.recommend(other)
         assert isinstance(recommend_instance, expected_class)
 
     def test_raise_exception_in_is_subset_of(self):
@@ -250,7 +238,7 @@ class TestTranslatedDigitPatternClass:
         """
         dummy_other = TranslatedDummyPattern()
         with pytest.raises(Exception) as ex:
-            self.digit_node.is_subset_of(dummy_other)
+            self.digits_node.is_subset_of(dummy_other)
         assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
 
     def test_raise_exception_in_is_superset_of(self):
@@ -260,7 +248,7 @@ class TestTranslatedDigitPatternClass:
         """
         dummy_other = TranslatedDummyPattern()
         with pytest.raises(Exception) as ex:
-            self.digit_node.is_superset_of(dummy_other)
+            self.digits_node.is_superset_of(dummy_other)
         assert ex.type.__name__ == "NotImplementRecommendedRTPattern"
 
     def test_raise_exception_in_recommend(self):
@@ -270,5 +258,5 @@ class TestTranslatedDigitPatternClass:
         """
         dummy_other = TranslatedDummyPattern()
         with pytest.raises(Exception) as ex:
-            self.digit_node.recommend(dummy_other)
+            self.digits_node.recommend(dummy_other)
         assert ex.type.__name__ == "NotImplementRecommendedRTPattern"

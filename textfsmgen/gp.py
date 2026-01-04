@@ -1419,7 +1419,8 @@ class TranslatedDigitPattern(TranslatedPattern):
         Raises
         ------
         RuntimeError
-            If no recommendation logic is implemented for the given case.
+            If `other` is not an instance of `TranslatedPattern`, a
+            `NotImplementRecommendedRTPattern` exception is raised.
         """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
@@ -1445,7 +1446,7 @@ class TranslatedDigitPattern(TranslatedPattern):
         """
         Check if this digit pattern is a superset of another pattern.
 
-        Digits are not considered supersets of any other pattern.
+        Digit is not considered supersets of any other pattern.
 
         Parameters
         ----------
@@ -1460,7 +1461,8 @@ class TranslatedDigitPattern(TranslatedPattern):
         Raises
         ------
         RuntimeError
-            If no recommendation logic is implemented for the given case.
+            If `other` is not an instance of `TranslatedPattern`, a
+            `NotImplementRecommendedRTPattern` exception is raised.
         """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
@@ -1515,47 +1517,158 @@ class TranslatedDigitPattern(TranslatedPattern):
 
 
 class TranslatedDigitsPattern(TranslatedPattern):
+    """
+    A translated pattern class specialized for multiple digit inputs.
 
+    This class extends `TranslatedPattern` to handle digit-specific
+    cases. It defines subset and superset relationships with other
+    translated patterns and provides recommendation logic for
+    generating generalized patterns when combined with other types.
+
+    Parameters
+    ----------
+    data : str
+        The primary input data representing digit(s).
+    *other : list of arguments, optional
+        Additional arguments passed to the base class initializer.
+
+    Attributes
+    ----------
+    name : str
+        The identifier for this pattern type (digit).
+    defined_pattern : str
+        The regex pattern used to match digits.
+    root_name : str
+        The root category name for this pattern ("non_whitespace").
+    """
     def __init__(self, data, *other):
-        super().__init__(data, *other, name=TEXT.DIGITS,
-                         defined_pattern=PATTERN.DIGITS,
-                         root_name='non_whitespaces')
+        super().__init__(
+            data,
+            *other,
+            name=TEXT.DIGITS,
+            defined_pattern=PATTERN.DIGITS,
+            root_name='non_whitespaces'
+        )
 
     def is_subset_of(self, other):
-        chk = other.is_digits()
-        chk |= other.is_number() or other.is_mixed_number()
-        chk |= other.is_word() or other.is_mixed_word()
-        chk |= other.is_words() or other.is_mixed_words()
-        chk |= other.is_non_whitespaces() or other.is_non_whitespaces_group()
+        """
+        Determine whether this digit pattern is a subset of another translated pattern.
 
-        return chk
+        Digits-pattern is considered a subset of broader categories such as
+        digits, numbers, mixed numbers, words, mixed words, non-whitespace
+        sequences, and non-whitespace groups.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern instance to compare against. Must be a subclass of
+            `TranslatedPattern`. If not, a recommendation exception is raised.
+
+        Returns
+        -------
+        bool
+            True if this digit pattern is a subset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`, a
+            `NotImplementRecommendedRTPattern` exception is raised.
+        """
+
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
+        return any([
+            other.is_digits(),
+            other.is_number(),
+            other.is_mixed_number(),
+            other.is_word(),
+            other.is_mixed_word(),
+            other.is_words(),
+            other.is_mixed_words(),
+            other.is_non_whitespaces(),
+            other.is_non_whitespaces_group(),
+        ])
 
     def is_superset_of(self, other):
-        chk = other.is_digit()
-        return chk
+        """
+        Determine whether this digit pattern is a superset of another translated pattern.
+
+        Digits-pattern is only considered a superset when the other pattern
+        represents a single digit. For all other cases, this method returns False.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern instance to compare against. Must be a subclass of
+            `TranslatedPattern`. If not, a recommendation exception is raised.
+
+        Returns
+        -------
+        bool
+            True if this digit pattern is a superset of `other` (i.e., when
+            `other` is a digit), otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`, a
+            `NotImplementRecommendedRTPattern` exception is raised.
+        """
+        if not isinstance(other, TranslatedPattern):
+            self.raise_recommend_exception(other)
+
+        return other.is_digit()
 
     def recommend(self, other):
+        """
+        Recommend a generalized translated pattern when combined with another pattern.
 
-        if self.is_subset_of(other) or self.is_superset_of(other):
-            if self.is_subset_of(other):
-                return self.get_new_subset(other)
-            else:
-                return self.get_new_superset(other)
-        else:
-            case1 = other.is_letter() or other.is_letters() or other.is_alphabet_numeric()
-            case2 = other.is_symbol() or other.is_symbols() or other.is_graph()
-            case3 = other.is_symbols_group()
-            case4 = other.is_non_whitespace()
-            if case1:
-                return TranslatedWordPattern(self.data, other.data)
-            elif case2:
-                return TranslatedNonWhitespacesPattern(self.data, other.data)
-            elif case3:
-                return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
-            elif case4:
-                return TranslatedNonWhitespacesPattern(self.data, other.data)
-            else:
-                return self.raise_recommend_exception(other)
+        This method determines how digits-pattern should be generalized
+        when paired with another translated pattern. If the digit is a
+        subset or superset of `other`, a new subset or superset pattern
+        is returned. Otherwise, specific combinations with letters,
+        symbols, graphs, or non-whitespace categories produce broader
+        generalized patterns.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or inherited of TranslatedPattern
+            The pattern to combine with this digit pattern.
+
+        Returns
+        -------
+        TranslatedPattern or inherited of TranslatedPattern
+            A generalized translated pattern instance based on the
+            relationship between this digit and `other`.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case,
+            a `NotImplementRecommendedRTPattern` exception is raised.
+        """
+        if self.is_subset_of(other):
+            return self.get_new_subset(other)
+        if self.is_superset_of(other):
+            return self.get_new_superset(other)
+
+        if any([other.is_letter(), other.is_letters(),
+                other.is_alphabet_numeric()]):
+            return TranslatedWordPattern(self.data, other.data)
+
+        if any([other.is_symbol(), other.is_symbols(), other.is_graph()]):
+            return TranslatedNonWhitespacesPattern(self.data, other.data)
+
+        if other.is_symbols_group():
+            return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
+
+        if other.is_non_whitespace():
+            return TranslatedNonWhitespacesPattern(self.data, other.data)
+
+        return self.raise_recommend_exception(other)
 
 
 class TranslatedNumberPattern(TranslatedPattern):
