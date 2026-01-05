@@ -3806,45 +3806,153 @@ class TranslatedNonWhitespacePattern(TranslatedPattern):
 
 
 class TranslatedNonWhitespacesPattern(TranslatedPattern):
-    def __init__(self, data, *other):
-        super().__init__(data, *other, name=TEXT.NON_WHITESPACES,
-                         defined_pattern=PATTERN.NON_WHITESPACES,
-                         root_name='non_whitespaces')
+    """
+    Specialized translated pattern for non-whitespace sequences.
 
-    def is_subset_of(self, other):
+    This subclass of `TranslatedPattern` defines behavior specific to
+    sequences of non-whitespace characters (letters, digits, symbols,
+    graphs, or words). It provides subset and superset checks against
+    other translated patterns and supports recommendation logic for
+    generalization when combined with different pattern types.
+
+    Parameters
+    ----------
+    data : str
+        The input string representing a non-whitespace sequence.
+    *other : list of other data, optional
+        Additional arguments passed to the base class initializer.
+
+    Attributes
+    ----------
+    name : str
+        Identifier for this pattern type ("non_whitespaces").
+    defined_pattern : str
+        Regex pattern used to match non-whitespace sequences.
+    root_name : str
+        Root category name for this pattern ("non_whitespaces").
+    """
+
+    def __init__(self, data: str, *other: object) -> None:
+        super().__init__(
+            data,
+            *other,
+            name=TEXT.NON_WHITESPACES,
+            defined_pattern=PATTERN.NON_WHITESPACES,
+            root_name="non_whitespaces",
+        )
+
+    def is_subset_of(self, other) -> bool:
+        """
+        Determine whether this non-whitespaces pattern is a subset of another translated pattern.
+
+        A non-whitespaces sequence is considered a subset of broader categories such as
+        non-whitespaces and non-whitespaces groups.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern instance to compare against.
+
+        Returns
+        -------
+        bool
+            True if this non-whitespaces pattern is a subset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
-        chk = other.is_non_whitespaces() or other.is_non_whitespaces_group()
 
-        return chk
+        return any([
+            other.is_non_whitespaces(),
+            other.is_non_whitespaces_group(),
+        ])
 
-    def is_superset_of(self, other):
+    def is_superset_of(self, other) -> bool:
+        """
+        Determine whether this non-whitespaces pattern is a superset of another translated pattern.
+
+        A non-whitespaces sequence is considered a superset when the other pattern
+        represents digits, numbers, letters, alphanumeric sequences, symbols, graphs,
+        words, or non-whitespace characters.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern instance to compare against.
+
+        Returns
+        -------
+        bool
+            True if this non-whitespaces pattern is a superset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
-        chk = other.is_digit() or other.is_digits()
-        chk |= other.is_number() or other.is_mixed_number()
-        chk |= other.is_letter() or other.is_letters()
-        chk |= other.is_alphabet_numeric() or other.is_graph()
-        chk |= other.is_symbol() or other.is_symbols()
-        chk |= other.is_word() or other.is_mixed_word()
-        chk |= other.is_non_whitespace()
 
-        return chk
+        return any([
+            other.is_digit(),
+            other.is_digits(),
+            other.is_number(),
+            other.is_mixed_number(),
+            other.is_letter(),
+            other.is_letters(),
+            other.is_alphabet_numeric(),
+            other.is_graph(),
+            other.is_symbol(),
+            other.is_symbols(),
+            other.is_word(),
+            other.is_mixed_word(),
+            other.is_non_whitespace(),
+        ])
 
     def recommend(self, other):
+        """
+        Recommend a generalized translated pattern when combined with another pattern.
 
-        if self.is_subset_of(other) or self.is_superset_of(other):
-            if self.is_subset_of(other):
-                return self.get_new_subset(other)
-            else:
-                return self.get_new_superset(other)
-        else:
-            case1 = other.is_symbols_group() or other.is_words() or other.is_mixed_words()
+        If this non-whitespaces pattern is a subset or superset of `other`,
+        a new subset or superset pattern is returned. Otherwise,
+        specific combinations with words, mixed words, or symbol groups
+        produce broader generalized patterns.
 
-            if case1:
-                return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
-            else:
-                return self.raise_recommend_exception(other)
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern to combine with this non-whitespaces pattern.
+
+        Returns
+        -------
+        TranslatedPattern or its subclass
+            A generalized translated pattern instance based on the
+            relationship between this non-whitespaces pattern and `other`.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
+        if self.is_subset_of(other):
+            return self.get_new_subset(other)
+        if self.is_superset_of(other):
+            return self.get_new_superset(other)
+
+        if any([
+            other.is_symbols_group(),
+            other.is_words(),
+            other.is_mixed_words(),
+        ]):
+            return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
+
+        return self.raise_recommend_exception(other)
 
 
 class TranslatedNonWhitespacesGroupPattern(TranslatedPattern):

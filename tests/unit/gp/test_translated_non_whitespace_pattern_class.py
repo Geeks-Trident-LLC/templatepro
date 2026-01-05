@@ -53,7 +53,7 @@ class TestTranslatedNonWhitespacePatternClass:
     )
     def test_is_subset_of(self, other):
         """
-        Verify that word data is a subset of (non-whitespaces(-group))
+        Verify that non-whitespace data is a subset of (non-whitespaces(-group))
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
@@ -70,7 +70,7 @@ class TestTranslatedNonWhitespacePatternClass:
     )
     def test_is_not_subset_of(self, other):
         """
-        Verify that word data is not a subset of (punct(s)(-group), number,
+        Verify that non-whitespace data is not a subset of (punct(s)(-group), number,
         mixed-number, graph)
         """
         args = to_list(other)
@@ -89,7 +89,7 @@ class TestTranslatedNonWhitespacePatternClass:
     )
     def test_is_superset_of(self, other):
         """
-        Verify that word data is a superset of (letter(s)).
+        Verify that non-whitespace data is a superset of (letter(s)).
         """
         args = to_list(other)
         other_instance = TranslatedPattern.do_factory_create(*args)
@@ -114,7 +114,7 @@ class TestTranslatedNonWhitespacePatternClass:
     )
     def test_recommend_method_case_subset(self, data, expected_class):
         """
-        Verify that word type correctly recommends a subset type
+        Verify that non-whitespace type correctly recommends a subset type
         when combined with compatible data.
         """
         args = to_list(data)
@@ -149,7 +149,7 @@ class TestTranslatedNonWhitespacePatternClass:
     )
     def test_recommend_method_case_superset(self, data, expected_class):
         """
-        Verify that word type correctly recommends a superset type
+        Verify that non-whitespace type correctly recommends a superset type
         when combined with compatible data.
         """
         args = to_list(data)
@@ -198,13 +198,13 @@ class TestTranslatedNonWhitespacePatternClass:
             ),
             (
                 "-- ++ ==",                             # punct-group
-                TranslatedNonWhitespacesGroupPattern    # (non-whitespace-group, punct-group) => non-whitespaces-group
+                TranslatedNonWhitespacesGroupPattern    # (non-whitespace, punct-group) => non-whitespaces-group
             ),
         ],
     )
     def test_recommend_method_case_aggregating(self, data, expected_class):
         """
-        Verify that word type correctly recommends a subset type
+        Verify that non-whitespace type correctly recommends a subset type
         when combined with compatible data.
         """
         args = to_list(data)
