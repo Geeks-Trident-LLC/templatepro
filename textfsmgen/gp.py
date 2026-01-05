@@ -3482,54 +3482,174 @@ class TranslatedMixedWordPattern(TranslatedPattern):
 
 
 class TranslatedMixedWordsPattern(TranslatedPattern):
-    def __init__(self, data, *other):
+    """
+    Specialized translated pattern for multiple mixed word inputs.
+
+    This subclass of `TranslatedPattern` defines behavior specific to
+    sequences of mixed words (phrases or groups containing both letters
+    and digits). It provides subset and superset checks against other
+    translated patterns and supports recommendation logic for
+    generalization when combined with different pattern types.
+
+    Parameters
+    ----------
+    data : str
+        The input string representing multiple mixed words.
+    *other : list of other data, optional
+        Additional arguments passed to the base class initializer.
+
+    Attributes
+    ----------
+    name : str
+        Identifier for this pattern type ("mixed_words").
+    defined_patterns : list of str
+        Regex patterns used to match mixed word sequences and groups.
+    ref_names : list of str
+        Reference names for the defined patterns.
+    singular_name : str
+        Singular form of this pattern ("mixed_word").
+    singular_pattern : str
+        Regex pattern used to match a single mixed word.
+    root_name : str
+        Root category name for this pattern ("non_whitespaces_or_group").
+    """
+
+    def __init__(self, data: str, *other: object) -> None:
         defined_patterns = [
             PATTERN.MIXED_WORDS,
             PATTERN.MIXED_WORD_OR_GROUP,
             PATTERN.MIXED_PHRASE,
-            PATTERN.MIXED_WORD_GROUP
+            PATTERN.MIXED_WORD_GROUP,
         ]
-        ref_names = ['mixed_words', 'mixed_word_or_group',
-                     'mixed_phrase', 'mixed_word_group']
-        super().__init__(data, *other, name=TEXT.MIXED_WORDS,
-                         defined_patterns=defined_patterns,
-                         ref_names=ref_names,
-                         singular_name='mixed_word',
-                         singular_pattern=PATTERN.MIXED_WORD,
-                         root_name='non_whitespaces_or_group')
+        ref_names = [
+            "mixed_words",
+            "mixed_word_or_group",
+            "mixed_phrase",
+            "mixed_word_group"
+        ]
 
-    def is_subset_of(self, other):
+        super().__init__(
+            data,
+            *other,
+            name=TEXT.MIXED_WORDS,
+            defined_patterns=defined_patterns,
+            ref_names=ref_names,
+            singular_name="mixed_word",
+            singular_pattern=PATTERN.MIXED_WORD,
+            root_name="non_whitespaces_or_group",
+        )
+
+    def is_subset_of(self, other) -> bool:
+        """
+        Determine whether this mixed words pattern is a subset of another translated pattern.
+
+        A sequence of mixed words is considered a subset of broader categories such as
+        mixed words and non-whitespace groups.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern instance to compare against.
+
+        Returns
+        -------
+        bool
+            True if this mixed words pattern is a subset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
-        chk = other.is_mixed_words() or other.is_non_whitespaces_group()
 
-        return chk
+        return any([
+            other.is_mixed_words(),
+            other.is_non_whitespaces_group(),
+        ])
 
-    def is_superset_of(self, other):
+    def is_superset_of(self, other) -> bool:
+        """
+        Determine whether this mixed words pattern is a superset of another translated pattern.
+
+        A sequence of mixed words is considered a superset when the other pattern
+        represents letters, digits, alphanumeric sequences, or single/mixed words.
+
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern instance to compare against.
+
+        Returns
+        -------
+        bool
+            True if this mixed words pattern is a superset of `other`,
+            otherwise False.
+
+        Raises
+        ------
+        RuntimeError
+            If `other` is not an instance of `TranslatedPattern`.
+        """
         if not isinstance(other, TranslatedPattern):
             self.raise_recommend_exception(other)
-        chk = other.is_letter() or other.is_letters()
-        chk |= other.is_digit() or other.is_digits()
-        chk |= other.is_alphabet_numeric()
-        chk |= other.is_word() or other.is_words() or other.is_mixed_word()
 
-        return chk
+        return any([
+            other.is_letter(),
+            other.is_letters(),
+            other.is_digit(),
+            other.is_digits(),
+            other.is_number(),
+            other.is_mixed_number(),
+            other.is_alphabet_numeric(),
+            other.is_word(),
+            other.is_words(),
+            other.is_mixed_word(),
+        ])
 
     def recommend(self, other):
+        """
+        Recommend a generalized translated pattern when combined with another pattern.
 
-        if self.is_subset_of(other) or self.is_superset_of(other):
-            if self.is_subset_of(other):
-                return self.get_new_subset(other)
-            else:
-                return self.get_new_superset(other)
-        else:
-            case1 = other.is_non_whitespace() or other.is_non_whitespaces()
-            case1 |= other.is_symbol() or other.is_symbols() or other.is_symbols_group()
+        If this mixed words pattern is a subset or superset of `other`,
+        a new subset or superset pattern is returned. Otherwise,
+        specific combinations with symbols or non-whitespace categories
+        produce broader generalized patterns.
 
-            if case1:
-                return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
-            else:
-                return self.raise_recommend_exception(other)
+        Parameters
+        ----------
+        other : TranslatedPattern or its subclass
+            The pattern to combine with this mixed words pattern.
+
+        Returns
+        -------
+        TranslatedPattern or its subclass
+            A generalized translated pattern instance based on the
+            relationship between this mixed words pattern and `other`.
+
+        Raises
+        ------
+        RuntimeError
+            If no recommendation logic is implemented for the given case.
+        """
+        if self.is_subset_of(other):
+            return self.get_new_subset(other)
+        if self.is_superset_of(other):
+            return self.get_new_superset(other)
+
+        if any([
+            other.is_graph(),
+            other.is_non_whitespace(),
+            other.is_non_whitespaces(),
+            other.is_symbol(),
+            other.is_symbols(),
+            other.is_symbols_group(),
+        ]):
+            return TranslatedNonWhitespacesGroupPattern(self.data, other.data)
+
+        return self.raise_recommend_exception(other)
 
 
 class TranslatedNonWhitespacePattern(TranslatedPattern):
