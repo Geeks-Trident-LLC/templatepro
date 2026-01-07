@@ -1,3 +1,20 @@
+"""
+textfsmgen.gpcategory
+=====================
+
+Provides category definitions and grouping utilities for grammar patterns
+used in the TextFSM Generator framework. This module centralizes the
+classification of grammar pattern categories, ensuring consistent handling
+across parsing, translation, and validation workflows.
+
+Purpose
+-------
+- Define semantic categories for grammar patterns.
+- Support category‑specific validation rules and translation logic.
+- Improve readability and maintainability of generated FSM templates.
+- Enable interoperability across CLI, GUI, and test modules.
+"""
+
 import re
 
 from regexapp import TextPattern
@@ -6,7 +23,9 @@ from genericlib import STRING, PATTERN, NUMBER, Misc
 from textfsmgen.gp import LData, TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
 from textfsmgen.gpiterative import IterativeLinePattern
-from textfsmgen.gpcommon import GPCommon
+
+from textfsmgen.gpcommon import get_line_position_by
+from textfsmgen.gpcommon import get_fixed_line_snippet
 
 
 class BaseCategoryPattern(LData):
@@ -700,7 +719,7 @@ class CategoryLinePattern(BaseCategoryPattern):
             This method modifies internal state (`self._lst`, `self.left_data`,
             `self.right_data`) but does not return a value.
         """
-        if not self.count:  # noqa
+        if not self.count:
             return
 
         self.raise_exception_if_not_category_pattern()
@@ -738,7 +757,7 @@ class CategoryLinesPattern(RuntimeException):
 
     Parameters
     ----------
-    *lines : str
+    *lines : Any
         One or more input lines to be parsed.
     options : dict, optional
         Mapping of line indices to keyword arguments for parsing.
@@ -778,7 +797,7 @@ class CategoryLinesPattern(RuntimeException):
 
     def __init__(
         self,
-        *lines: str,
+        *lines: list[str],
         options: dict | None = None,
         count: int = 1,
         separator: str = ":",
@@ -786,7 +805,7 @@ class CategoryLinesPattern(RuntimeException):
         ending_to: str | int | None = None,
     ) -> None:
         self.lines = Misc.get_list_of_lines(*lines)
-        self.options = options or {}
+        self.options = options or dict()
         self.count = count
         self.separator = separator
         self.kwargs = dict(count=self.count, separator=self.separator)
@@ -836,8 +855,8 @@ class CategoryLinesPattern(RuntimeException):
           `ending_to` is ignored.
         - Errors during parsing fall back to storing the raw line.
         """
-        self.index_a = GPCommon.get_line_position_by(self.lines, self.starting_from)    # noqa
-        self.index_b = GPCommon.get_line_position_by(self.lines, self.ending_to)
+        self.index_a = get_line_position_by(self.lines, self.starting_from)
+        self.index_b = get_line_position_by(self.lines, self.ending_to)
 
         if self.index_a and self.index_b and self.index_a >= self.index_b:
             self.index_b = None
@@ -909,14 +928,14 @@ class CategoryLinesPattern(RuntimeException):
             for item in self._lst
         ]
 
-        tmpl_snippet = Misc.join_string(*result, separator=STRING.NEWLINE)  # noqa
+        tmpl_snippet = Misc.join_string(*result, separator=STRING.NEWLINE)
 
         if self.index_a is not None:
-            line_snippet = GPCommon.get_fixed_line_snippet(self.lines, index=self.index_a)
+            line_snippet = get_fixed_line_snippet(self.lines, index=self.index_a)
             tmpl_snippet = f"{line_snippet} -> Table\nTable\n{tmpl_snippet}"
 
         if self.index_b is not None:
-            line_snippet = GPCommon.get_fixed_line_snippet(self.lines, index=self.index_b)
+            line_snippet = get_fixed_line_snippet(self.lines, index=self.index_b)
             tmpl_snippet = f"{tmpl_snippet}\n{line_snippet} -> EOF"
 
         return tmpl_snippet

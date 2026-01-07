@@ -10,7 +10,8 @@ from genericlib import Misc, STRING, NUMBER, PATTERN, INDEX
 from textfsmgen.gp import TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
 
-from textfsmgen.gpcommon import GPCommon
+from textfsmgen.gpcommon import get_line_position_by
+from textfsmgen.gpcommon import get_fixed_line_snippet
 
 
 class TabularTextPattern(RuntimeException):
@@ -72,8 +73,8 @@ class TabularTextPattern(RuntimeException):
             self.raise_runtime_error(msg=fmt % col_widths)
 
     def process(self):
-        self.index_a = GPCommon.get_line_position_by(self.lines, self.starting_from)
-        self.index_b = GPCommon.get_line_position_by(self.lines, self.ending_to)
+        self.index_a = get_line_position_by(self.lines, self.starting_from)
+        self.index_b = get_line_position_by(self.lines, self.ending_to)
 
         lines = self.lines[self.index_a:self.index_b]
         self.tabular_parser = TabularTextPatternByVarColumns(*lines, **self.kwargs)
@@ -91,7 +92,7 @@ class TabularTextPattern(RuntimeException):
         lines = tmpl_snippet.splitlines()
         first_line = lines[0]
         if self.index_a is not None:
-            line_snippet = GPCommon.get_fixed_line_snippet(self.lines, index=self.index_a)
+            line_snippet = get_fixed_line_snippet(self.lines, index=self.index_a)
             if line_snippet:
                 if re.search(LinePattern(line_snippet), first_line):
                     tmpl_snippet = Misc.join_string(*lines[1:], separator='\n')
@@ -100,7 +101,7 @@ class TabularTextPattern(RuntimeException):
         lines = tmpl_snippet.splitlines()
         last_line = lines[-1]
         if self.index_b is not None:
-            line_snippet = GPCommon.get_fixed_line_snippet(self.lines, index=self.index_b)
+            line_snippet = get_fixed_line_snippet(self.lines, index=self.index_b)
             if line_snippet:
                 if re.search(LinePattern(line_snippet), last_line):
                     tmpl_snippet = Misc.join_string(*lines[:-1], separator='\n')
