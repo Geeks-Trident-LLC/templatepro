@@ -1,8 +1,57 @@
+"""
+Unit tests for the `textfsmgen.gptabular.TabularTextPattern` class.
+
+Usage
+-----
+Run pytest in the project root to execute these tests:
+    $ pytest tests/unit/gptabular/test_tabular_text_pattern_class.py
+    or
+    $ python -m pytest tests/unit/gptabular/test_tabular_text_pattern_class.py
+"""
+
 import pytest           # noqa
 from textwrap import dedent
-
 from textfsmgen.gptabular import TabularTextPattern
 
+
+def test_fixed_columns():
+    text = dedent("""
+        index     col1            col2
+        1         item1.1         item1.2
+        2         item2.1         item2.2
+        3         ?               item3.2
+    """).strip()
+
+    expected_tmpl_snippet = dedent("""
+        index     col1            col2
+        start() digit(var_index)  non_whitespaces(var_col)  mixed_word(var_col2) end() -> record
+    """).strip()
+
+    node = TabularTextPattern(text, col_widths="10, 15,")
+    tmpl_snippet = node.to_template_snippet()
+    assert tmpl_snippet == expected_tmpl_snippet
+
+def test_tabular_calculating_max_width():
+    text = dedent("""
+        a        b      
+        -------- -------
+        val1.1   val1.2
+                 val2.2
+        val3.1
+        val4.1   val4.2
+        val5.1
+    """).strip()
+
+    expected_tmpl_snippet = dedent("""
+        a        b      
+        start() mixed_word(var_a)  mixed_word(var_b) end(space) -> record
+        start() mixed_word(var_a) end(space) -> record
+        start() space(repetition_7_9) mixed_word(var_b) end(space) -> record
+    """).strip()
+
+    node = TabularTextPattern(text)
+    tmpl_snippet = node.to_template_snippet()
+    assert tmpl_snippet == expected_tmpl_snippet
 
 def test_correctness_group_or_phrase():
     text = dedent("""
@@ -153,3 +202,4 @@ start() space(repetition_15_17) mixed_word(var_c) end() -> record
     node = TabularTextPattern(text)
     tmpl_snippet = node.to_template_snippet()
     assert tmpl_snippet == expected_tmpl_snippet
+
