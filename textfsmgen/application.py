@@ -19,7 +19,7 @@ Notes
   access to template generation is available via `textfsmgen.__init__`.
 """
 
-from genericlib.misc import ensure_tkinter_available
+from textfsmgen.deps import genericlib_ensure_tkinter_available as ensure_tkinter_available
 tk = ensure_tkinter_available(app_name="textfsmgen")
 
 from tkinter import ttk
@@ -36,13 +36,13 @@ from pathlib import PurePath
 import yaml
 from io import StringIO
 from textfsm import TextFSM
-
 from pprint import pformat
-from genericlib import get_data_as_tabular
-from genericlib import DotObject
-from genericlib.exceptions import raise_exception
-from genericlib.text import dedent_and_strip
-import genericlib.file as file
+
+from textfsmgen.deps import genericlib_get_data_as_tabular as get_data_as_tabular
+from textfsmgen.deps import genericlib_DotObject as DotObject
+from textfsmgen.deps import genericlib_raise_exception as raise_exception
+from textfsmgen.deps import genericlib_dedent_and_strip as dedent_and_strip
+from textfsmgen.deps import genericlib_file_module as file
 
 from textfsmgen import TemplateBuilder
 from textfsmgen.exceptions import TemplateBuilderInvalidFormat

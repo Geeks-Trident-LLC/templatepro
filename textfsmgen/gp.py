@@ -41,13 +41,12 @@ Notes
 
 import re
 
-from genericlib import NUMBER
-from genericlib import STRING
-from genericlib import PATTERN
-from genericlib import TEXT
-from genericlib import SYMBOL
-
-from genericlib import Misc
+from textfsmgen.deps import genericlib_NUMBER as NUMBER     # noqa
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_TEXT as TEXT         # noqa
+from textfsmgen.deps import genericlib_SYMBOL as SYMBOL     # noqa
+from textfsmgen.deps import genericlib_Misc as Misc
 
 from textfsmgen.exceptions import RuntimeException
 

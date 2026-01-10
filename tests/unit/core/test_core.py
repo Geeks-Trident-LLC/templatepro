@@ -4,27 +4,6 @@ Unit tests for `textfsmgen.core` functions: `get_textfsm_template` and `verify`.
 This module validates the behavior of two core functions used in the
 TextFSM Generator workflow:
 
-Functions Tested
-----------------
-- get_textfsm_template
-    Ensures that a TextFSM template is correctly generated from user data
-    snippets and matches the expected template output.
-
-- verify
-    Confirms that a generated template can parse test data correctly.
-    The parsed output is validated against expected results and row counts.
-
-Test Coverage
--------------
-- Template generation:
-    * User data is converted into a valid TextFSM template.
-    * Output matches the expected template definition.
-
-- Verification:
-    * Template parses provided test data into structured results.
-    * Row count matches the expected number of parsed records.
-    * Parsed results match the expected dictionaries.
-
 Usage
 -----
 Run pytest in the project root to execute these tests:

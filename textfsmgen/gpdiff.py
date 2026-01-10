@@ -27,12 +27,17 @@ from typing import List
 from difflib import ndiff
 from itertools import combinations
 
-from regexapp import TextPattern
-from regexapp import ElementPattern
-from regexapp import LinePattern
+from textfsmgen.deps import regexapp_TextPattern as TextPattern
+from textfsmgen.deps import regexapp_ElementPattern as ElementPattern
+from textfsmgen.deps import regexapp_LinePattern as LinePattern
 
-from genericlib import STRING, PATTERN, Misc, NUMBER, INDEX
-from genericlib import Text
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_NUMBER as NUMBER     # noqa
+from textfsmgen.deps import genericlib_INDEX as INDEX       # noqa
+from textfsmgen.deps import genericlib_Misc as Misc
+from textfsmgen.deps import genericlib_Text as Text
+
 from textfsmgen.gp import TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
 

@@ -17,9 +17,12 @@ Purpose
 
 import re
 
-from regexapp import TextPattern
+from textfsmgen.deps import regexapp_TextPattern as TextPattern
+from textfsmgen.deps import genericlib_NUMBER as NUMBER     # noqa
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_Misc as Misc
 
-from genericlib import STRING, PATTERN, NUMBER, Misc
 from textfsmgen.gp import LData, TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
 from textfsmgen.gpiterative import IterativeLinePattern

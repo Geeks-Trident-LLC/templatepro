@@ -28,8 +28,13 @@ Notes
 
 import re
 
-from regexapp import TextPattern
-from genericlib import Misc, STRING, Wildcard, PATTERN, Text
+from textfsmgen.deps import regexapp_TextPattern as TextPattern
+from textfsmgen.deps import genericlib_Wildcard as Wildcard
+from textfsmgen.deps import genericlib_Text as Text
+from textfsmgen.deps import genericlib_Misc as Misc
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+
 from textfsmgen.gp import TranslatedPattern
 
 from textfsmgen.exceptions import RuntimeException

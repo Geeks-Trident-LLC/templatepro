@@ -28,9 +28,9 @@ import argparse
 import re
 import yaml
 
-from genericlib.misc import sys_exit
-from genericlib.text import decorate_list_of_line
-import genericlib.file as file
+from textfsmgen.deps import genericlib_sys_exit as sys_exit
+from textfsmgen.deps import genericlib_decorate_list_of_line as decorate_list_of_line
+from textfsmgen.deps import genericlib_file_module as file
 
 from textfsmgen.application import Application
 from textfsmgen import TemplateBuilder

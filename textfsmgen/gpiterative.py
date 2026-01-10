@@ -32,11 +32,18 @@ import re
 
 from typing import List, Tuple, Optional
 
-from regexapp import TextPattern
+from textfsmgen.deps import regexapp_TextPattern as TextPattern
 
-from genericlib import STRING, NUMBER, PATTERN, SYMBOL, Misc
-from genericlib.constpattern import get_ref_pattern_by_name
-from textfsmgen.gp import TranslatedPattern, LData
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_NUMBER as NUMBER     # noqa
+from textfsmgen.deps import genericlib_SYMBOL as SYMBOL     # noqa
+
+from textfsmgen.deps import genericlib_Misc as Misc
+from textfsmgen.deps import genericlib_get_ref_pattern_by_name as get_ref_pattern_by_name
+
+from textfsmgen.gp import TranslatedPattern
+from textfsmgen.gp import LData
 from textfsmgen.exceptions import RuntimeException
 
 

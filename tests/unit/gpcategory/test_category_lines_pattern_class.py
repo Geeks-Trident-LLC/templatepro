@@ -18,7 +18,7 @@ from textfsmgen.gpcategory import CategoryLinesPattern
 
 from tests.unit import replace_dates_with_placeholder
 
-from genericlib.decorators import normalize_return_output_text
+from textfsmgen.deps import genericlib_normalize_return_output_text as normalize_return_output_text
 
 
 class DataForStartingEndingArgumentsTests:

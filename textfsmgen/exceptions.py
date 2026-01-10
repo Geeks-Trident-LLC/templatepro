@@ -24,12 +24,11 @@ Notes
 - Exception messages are designed to be user‑friendly for GUI dialogs
   while still informative for developers.
 """
-from genericlib.exceptions import raise_runtime_error
-from genericlib.exceptions import raise_exception
+from textfsmgen.deps import genericlib_raise_runtime_error as raise_runtime_error
+from textfsmgen.deps import genericlib_raise_exception as raise_exception   # noqa
 
-raise_exception = raise_exception
 
-class TemplateError(Exception):
+class TemplateError(Exception):     # noqa
     """
     Base class for all template-related errors in the TextFSM Generator.
 

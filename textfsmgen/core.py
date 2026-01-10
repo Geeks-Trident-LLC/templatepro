@@ -30,14 +30,15 @@ from textwrap import indent
 from textfsm import TextFSM
 from io import StringIO
 
-from regexapp import LinePattern
-from regexapp.core import enclose_string
+from textfsmgen.deps import genericlib_text_module as text
+from textfsmgen.deps import genericlib_file_module as file
 
-from genericlib import get_data_as_tabular
-from genericlib import Printer
-from genericlib import MiscObject
-import genericlib.text as text
-import genericlib.file as file
+from textfsmgen.deps import regexapp_LinePattern as LinePattern
+from textfsmgen.deps import regexapp_enclose_string as enclose_string
+
+from textfsmgen.deps import genericlib_get_data_as_tabular as get_data_as_tabular
+from textfsmgen.deps import genericlib_Printer as Printer
+from textfsmgen.deps import genericlib_MiscObject as MiscObject
 
 from textfsmgen.exceptions import TemplateParsedLineError
 from textfsmgen.exceptions import TemplateBuilderError

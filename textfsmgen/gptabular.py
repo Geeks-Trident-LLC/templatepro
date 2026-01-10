@@ -45,9 +45,13 @@ import statistics
 import operator as op
 import re
 
-from regexapp import LinePattern
+from textfsmgen.deps import regexapp_LinePattern as LinePattern
+from textfsmgen.deps import genericlib_NUMBER as NUMBER     # noqa
+from textfsmgen.deps import genericlib_STRING as STRING     # noqa
+from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_INDEX as INDEX       # noqa
+from textfsmgen.deps import genericlib_Misc as Misc
 
-from genericlib import Misc, STRING, NUMBER, PATTERN, INDEX
 from textfsmgen.gp import TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
 
