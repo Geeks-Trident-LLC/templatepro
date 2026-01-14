@@ -34,6 +34,7 @@ from textfsmgen.deps import genericlib_Text as Text
 from textfsmgen.deps import genericlib_Misc as Misc
 from textfsmgen.deps import genericlib_STRING as STRING     # noqa
 from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
+from textfsmgen.deps import genericlib_number_module as number
 
 from textfsmgen.gp import TranslatedPattern
 
@@ -83,7 +84,7 @@ def get_line_position_by(lines: list[str], item: str | int | None) -> int | None
             if re.search(pattern, line, re.I):
                 return index
     else:
-        is_number, index = Misc.try_to_get_number(item, return_type=int)
+        is_number, index = number.try_to_get_number(item, return_type=int)
         if is_number:
             return None if index >= len(lines) else index
 
@@ -130,7 +131,7 @@ def get_fixed_line_snippet(lines: list[str], line: str = "", index: int | None =
     """
     # Resolve line by index if provided
     if index is not None:
-        is_number, converted_index = Misc.try_to_get_number(index, return_type=int)
+        is_number, converted_index = number.try_to_get_number(index, return_type=int)
         if is_number:
             try:
                 line = lines[converted_index]

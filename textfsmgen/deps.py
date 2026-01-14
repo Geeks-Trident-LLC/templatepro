@@ -29,8 +29,9 @@ Notes
 
 # Module imports
 # Provide file and text utilities for parsing, formatting, and I/O operations.
-import genericlib.file as genericlib_file_module    # noqa
-import genericlib.text as genericlib_text_module    # noqa
+import genericlib.file as genericlib_file_module        # noqa
+import genericlib.text as genericlib_text_module        # noqa
+import genericlib.number as genericlib_number_module    # noqa
 
 # Core classes
 # Fundamental data structures and helpers for object handling, printing, and text manipulation.

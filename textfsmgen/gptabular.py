@@ -51,6 +51,7 @@ from textfsmgen.deps import genericlib_STRING as STRING     # noqa
 from textfsmgen.deps import genericlib_PATTERN as PATTERN   # noqa
 from textfsmgen.deps import genericlib_INDEX as INDEX       # noqa
 from textfsmgen.deps import genericlib_Misc as Misc
+from textfsmgen.deps import genericlib_number_module as number
 
 from textfsmgen.gp import TranslatedPattern
 from textfsmgen.exceptions import RuntimeException
@@ -72,7 +73,7 @@ class TabularTextPattern(RuntimeException):
 
     Parameters
     ----------
-    *lines : str
+    *lines : List[str]
         Input lines of text to be parsed.
     divider : str, optional
         Column divider character(s). Default is an empty string.
@@ -142,7 +143,7 @@ class TabularTextPattern(RuntimeException):
                 widths = col_widths[:]
 
             for idx, width_ in enumerate(widths):
-                is_number, width = Misc.try_to_get_number(width_, return_type=int)
+                is_number, width = number.try_to_get_number(width_, return_type=int)
                 if is_number:
                     normalized.append(width)
                 elif idx == len(widths) - NUMBER.ONE:
@@ -226,7 +227,7 @@ class TabularTextPatternByVarColumns(RuntimeException):
 
     Parameters
     ----------
-    *lines : str
+    *lines : List[str]
         Input lines representing tabular text.
     divider : str, optional
         Column divider character (default is empty string).
@@ -355,7 +356,7 @@ class TabularTextPatternByVarColumns(RuntimeException):
 
         elif Misc.is_list(data):
             for item in data:
-                is_number, index = Misc.try_to_get_number(item, return_type=int)
+                is_number, index = number.try_to_get_number(item, return_type=int)
                 if is_number and index < total_lines:
                     hdr_line = self.lines[index]
                     if hdr_line not in lst:
@@ -643,7 +644,7 @@ class TabularTable(RuntimeException):
 
     Parameters
     ----------
-    *lines : str
+    *lines : list[str]
         Input lines of tabular text.
     ref_row : TabularRow, optional
         Reference row used for parsing and alignment.
@@ -782,7 +783,7 @@ class TabularTable(RuntimeException):
 
         Parameters
         ----------
-        lines : list[str]
+        lines : List[str]
             Raw input lines.
 
         Returns
@@ -1592,8 +1593,8 @@ class TabularCell(RuntimeException):
         """Validate positions and initialize cell data."""
         line, left_pos, right_pos, ref_cell = self.args
 
-        is_left, left = Misc.try_to_get_number(left_pos, return_type=int)
-        is_right, right = Misc.try_to_get_number(right_pos, return_type=int)
+        is_left, left = number.try_to_get_number(left_pos, return_type=int)
+        is_right, right = number.try_to_get_number(right_pos, return_type=int)
 
         if not is_left:
             self.raise_runtime_error(
