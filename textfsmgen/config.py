@@ -30,7 +30,7 @@ import yaml
 from textfsmgen.deps import genericlib_version
 from textfsmgen.deps import genericlib_file_module as file
 
-__version__ = '0.3.0a1'
+__version__ = '0.3.1a1'
 version = __version__   # noqa
 __edition__ = 'Community'
 edition = __edition__
