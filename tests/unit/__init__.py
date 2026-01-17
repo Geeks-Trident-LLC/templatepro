@@ -5,11 +5,9 @@ Usage
 -----
 Run pytest in the project root to execute these tests:
     $ pytest
-    or
     $ pytest tests/unit
     or
     $ python -m pytest
-    or
     $ python -m pytest tests/unit
 """
 

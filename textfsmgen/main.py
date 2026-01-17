@@ -541,13 +541,13 @@ class Cli:
 
         show_version(self.options)
         show_dependency(self.options)
+        run_gui_application(self.options)
         self.validate_cli_flags()
         if not self.options.test_data:
             self.build_template()
         else:
             self.run_test()
             self.build_test_script()
-        run_gui_application(self.options)
 
 
 def execute():

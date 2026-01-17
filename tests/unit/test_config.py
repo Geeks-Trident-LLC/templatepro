@@ -1,9 +1,39 @@
+"""
+Unit tests for the `textfsmgen.config` module.
+
+Usage
+-----
+Run pytest in the project root to execute these tests:
+    $ pytest tests/unit/test_config.py
+    or
+    $ python -m pytest tests/unit/test_config.py
+"""
+
 
 import pytest
-from textfsmgen import version
-import textfsmgen.config as config
 from pathlib import Path
 from pathlib import PurePath
+
+from textfsmgen import version
+import textfsmgen.config as config
+from textfsmgen.deps import genericlib_shell_module as shell
+
+
+# Package info for regexapp
+pkg_info = shell.PackageInfo("textfsmgen")
+
+# Skip marker if textfsmgen is not installed
+skip_if_missing_textfsmgen = pytest.mark.skipif(
+    not pkg_info.is_installed,
+    reason="Skipping: textfsmgen package is not installed."
+)
+
+
+@skip_if_missing_textfsmgen
+def test_version_matches_config():
+    """Ensure installed package version matches config version."""
+    assert pkg_info.is_installed is True
+    assert pkg_info.version == config.version
 
 
 class TestData:
